@@ -1,0 +1,276 @@
+import { pgTable, serial, integer, decimal, boolean, date, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const binaryMatchingLogsTable = pgTable("binary_matching_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  matchDate: date("match_date").notNull(),
+  pairsMatched: integer("pairs_matched").notNull().default(0),
+  flushedPairs: integer("flushed_pairs").notNull().default(0),
+  grossAmount: decimal("gross_amount", { precision: 14, scale: 2 }).notNull().default("0"),
+  netAmount: decimal("net_amount", { precision: 14, scale: 2 }).notNull().default("0"),
+  isJackpot: boolean("is_jackpot").notNull().default(false),
+  isInfiniteLoop: boolean("is_infinite_loop").notNull().default(false),
+  leftBvConsumed: integer("left_bv_consumed").notNull().default(0),
+  rightBvConsumed: integer("right_bv_consumed").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertBinaryLogSchema = createInsertSchema(binaryMatchingLogsTable).omit({ id: true, createdAt: true });
+export type InsertBinaryLog = z.infer<typeof insertBinaryLogSchema>;
+export type BinaryMatchingLog = typeof binaryMatchingLogsTable.$inferSelect;
+import { pgTable, serial, integer, decimal, boolean, text, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const ctoTurnoverTable = pgTable("cto_turnover", {
+  id: serial("id").primaryKey(),
+  month: integer("month").notNull(), // 1-12
+  year: integer("year").notNull(),
+  totalTurnover: decimal("total_turnover", { precision: 16, scale: 2 }).notNull(),
+  smartPool: decimal("smart_pool", { precision: 14, scale: 2 }).notNull(), // 5% of total
+  silverPool: decimal("silver_pool", { precision: 14, scale: 2 }).notNull(), // 10%
+  goldPool: decimal("gold_pool", { precision: 14, scale: 2 }).notNull(),   // 15%
+  smartActiveUsers: integer("smart_active_users").notNull().default(0),
+  silverActiveUsers: integer("silver_active_users").notNull().default(0),
+  goldActiveUsers: integer("gold_active_users").notNull().default(0),
+  smartPerShare: decimal("smart_per_share", { precision: 14, scale: 4 }).notNull().default("0"),
+  silverPerShare: decimal("silver_per_share", { precision: 14, scale: 4 }).notNull().default("0"),
+  goldPerShare: decimal("gold_per_share", { precision: 14, scale: 4 }).notNull().default("0"),
+  distributed: boolean("distributed").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  distributedAt: timestamp("distributed_at"),
+});
+
+export const ctoDistributionsTable = pgTable("cto_distributions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  turnoverRecordId: integer("turnover_record_id").notNull(),
+  month: integer("month").notNull(),
+  year: integer("year").notNull(),
+  package: text("package").notNull(),
+  amount: decimal("amount", { precision: 14, scale: 4 }).notNull(),
+  cumulativeReceived: decimal("cumulative_received", { precision: 14, scale: 2 }).notNull(),
+  isTerminated: boolean("is_terminated").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertCtoTurnoverSchema = createInsertSchema(ctoTurnoverTable).omit({ id: true, createdAt: true });
+export const insertCtoDistributionSchema = createInsertSchema(ctoDistributionsTable).omit({ id: true, createdAt: true });
+
+export type CtoTurnover = typeof ctoTurnoverTable.$inferSelect;
+export type CtoDistribution = typeof ctoDistributionsTable.$inferSelect;
+import { pgTable, serial, text, integer, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const epinStatusEnum = pgEnum("epin_status", ["unused", "used", "transferred"]);
+export const epinRequestStatusEnum = pgEnum("epin_request_status", ["pending", "approved", "rejected"]);
+
+export const epinsTable = pgTable("epins", {
+  id: serial("id").primaryKey(),
+  pin: text("pin").notNull().unique(),
+  package: text("package").notNull(),
+  packagePrice: integer("package_price").notNull(),
+  bv: integer("bv").notNull(),
+  status: epinStatusEnum("status").notNull().default("unused"),
+  generatedById: integer("generated_by_id"),
+  assignedToId: integer("assigned_to_id"),
+  transferredToId: integer("transferred_to_id"),
+  usedByUserId: integer("used_by_user_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  usedAt: timestamp("used_at"),
+});
+
+export const epinRequestsTable = pgTable("epin_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  package: text("package").notNull(),
+  quantity: integer("quantity").notNull(),
+  paymentReference: text("payment_reference").notNull(),
+  totalAmount: integer("total_amount").notNull(),
+  status: epinRequestStatusEnum("status").notNull().default("pending"),
+  rejectionReason: text("rejection_reason"),
+  processedById: integer("processed_by_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  processedAt: timestamp("processed_at"),
+});
+
+export const insertEpinSchema = createInsertSchema(epinsTable).omit({ id: true, createdAt: true });
+export const insertEpinRequestSchema = createInsertSchema(epinRequestsTable).omit({ id: true, createdAt: true });
+export type InsertEpin = z.infer<typeof insertEpinSchema>;
+export type InsertEpinRequest = z.infer<typeof insertEpinRequestSchema>;
+export type Epin = typeof epinsTable.$inferSelect;
+export type EpinRequest = typeof epinRequestsTable.$inferSelect;
+export * from "./users";
+export * from "./epins";
+export * from "./wallets";
+export * from "./binary";
+export * from "./cto";
+export * from "./rewards";
+export * from "./sessions";
+export * from "./kyc";
+import { pgTable, serial, integer, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const kycStatusEnum = pgEnum("kyc_status", ["not_submitted", "pending", "approved", "rejected"]);
+
+export const kycTable = pgTable("kyc", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().unique(),
+  aadhaarNumber: text("aadhaar_number"),
+  aadhaarFrontUrl: text("aadhaar_front_url"),
+  aadhaarBackUrl: text("aadhaar_back_url"),
+  panNumber: text("pan_number"),
+  panPhotoUrl: text("pan_photo_url"),
+  bankName: text("bank_name"),
+  holderName: text("holder_name"),
+  accountNumber: text("account_number"),
+  ifscCode: text("ifsc_code"),
+  upiId: text("upi_id"),
+  status: kycStatusEnum("status").notNull().default("not_submitted"),
+  rejectionReason: text("rejection_reason"),
+  reviewedById: integer("reviewed_by_id"),
+  submittedAt: timestamp("submitted_at"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertKycSchema = createInsertSchema(kycTable).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertKyc = z.infer<typeof insertKycSchema>;
+export type Kyc = typeof kycTable.$inferSelect;
+import { pgTable, serial, integer, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const REWARD_MILESTONES = [
+  { pairs: 25, rewardName: "T-Shirt", cashValue: 500 },
+  { pairs: 50, rewardName: "Leather Bag", cashValue: 2000 },
+  { pairs: 100, rewardName: "Trolley Bag", cashValue: 5000 },
+  { pairs: 200, rewardName: "Cooling Freeze", cashValue: 15000 },
+  { pairs: 500, rewardName: "Inverter Set", cashValue: 30000 },
+  { pairs: 1000, rewardName: "Bike", cashValue: 80000 },
+  { pairs: 10000, rewardName: "Jawa Bike", cashValue: 250000 },
+  { pairs: 30000, rewardName: "Tata Punch Car", cashValue: 550000 },
+  { pairs: 50000, rewardName: "Tata Sierra Car", cashValue: 1150000 },
+] as const;
+
+export const rewardClaimsTable = pgTable("reward_claims", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  pairsMilestone: integer("pairs_milestone").notNull(),
+  rewardName: text("reward_name").notNull(),
+  cashValue: integer("cash_value").notNull(),
+  claimedAs: text("claimed_as").notNull(), // reward | cash
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertRewardClaimSchema = createInsertSchema(rewardClaimsTable).omit({ id: true, createdAt: true });
+export type InsertRewardClaim = z.infer<typeof insertRewardClaimSchema>;
+export type RewardClaim = typeof rewardClaimsTable.$inferSelect;
+import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+
+export const sessionsTable = pgTable("sessions", {
+  id: serial("id").primaryKey(),
+  token: text("token").notNull().unique(),
+  userId: integer("user_id").notNull(),
+  role: text("role").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type Session = typeof sessionsTable.$inferSelect;
+import { pgTable, serial, text, integer, boolean, timestamp, decimal, pgEnum } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const packageEnum = pgEnum("package_type", ["smart", "silver", "gold"]);
+export const userStatusEnum = pgEnum("user_status", ["active", "blocked", "inactive"]);
+export const userRoleEnum = pgEnum("user_role", ["member", "admin"]);
+
+export const usersTable = pgTable("users", {
+  id: serial("id").primaryKey(),
+  memberId: text("member_id").notNull().unique(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  phone: text("phone").notNull(),
+  passwordHash: text("password_hash").notNull(),
+  package: packageEnum("package").notNull().default("smart"),
+  bv: integer("bv").notNull().default(1),
+  role: userRoleEnum("role").notNull().default("member"),
+  status: userStatusEnum("status").notNull().default("active"),
+  sponsorId: integer("sponsor_id"),
+  leftChildId: integer("left_child_id"),
+  rightChildId: integer("right_child_id"),
+  // CTO pool tracking
+  ctoActive: boolean("cto_active").notNull().default(true),
+  ctoTotalReceived: decimal("cto_total_received", { precision: 12, scale: 2 }).notNull().default("0"),
+  packageCost: integer("package_cost").notNull().default(2100),
+  // Banking
+  bankAccount: text("bank_account"),
+  bankName: text("bank_name"),
+  ifscCode: text("ifsc_code"),
+  upiId: text("upi_id"),
+  // Pair tracking
+  lifetimePairs: integer("lifetime_pairs").notNull().default(0),
+  leftBv: integer("left_bv").notNull().default(0),
+  rightBv: integer("right_bv").notNull().default(0),
+  carryForwardBv: integer("carry_forward_bv").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof usersTable.$inferSelect;
+import { pgTable, serial, integer, decimal, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const withdrawalStatusEnum = pgEnum("withdrawal_status", ["pending", "approved", "rejected"]);
+
+export const walletsTable = pgTable("wallets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().unique(),
+  balance: decimal("balance", { precision: 14, scale: 2 }).notNull().default("0"),
+  totalEarned: decimal("total_earned", { precision: 14, scale: 2 }).notNull().default("0"),
+  totalWithdrawn: decimal("total_withdrawn", { precision: 14, scale: 2 }).notNull().default("0"),
+  pendingWithdrawal: decimal("pending_withdrawal", { precision: 14, scale: 2 }).notNull().default("0"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const transactionsTable = pgTable("transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  type: text("type").notNull(), // binary_income | cto_royalty | withdrawal | reward_cash | jackpot_bonus
+  amount: decimal("amount", { precision: 14, scale: 2 }).notNull(),
+  description: text("description").notNull(),
+  status: text("status").notNull().default("completed"), // completed | pending | failed
+  referenceId: integer("reference_id"), // FK to matching record, withdrawal, etc.
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const withdrawalRequestsTable = pgTable("withdrawal_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  grossAmount: decimal("gross_amount", { precision: 14, scale: 2 }).notNull(),
+  deductionAmount: decimal("deduction_amount", { precision: 14, scale: 2 }).notNull(),
+  netAmount: decimal("net_amount", { precision: 14, scale: 2 }).notNull(),
+  method: text("method").notNull(), // bank | upi
+  status: withdrawalStatusEnum("status").notNull().default("pending"),
+  rejectionReason: text("rejection_reason"),
+  processedById: integer("processed_by_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  processedAt: timestamp("processed_at"),
+});
+
+export const insertWalletSchema = createInsertSchema(walletsTable).omit({ id: true, updatedAt: true });
+export const insertTransactionSchema = createInsertSchema(transactionsTable).omit({ id: true, createdAt: true });
+export const insertWithdrawalSchema = createInsertSchema(withdrawalRequestsTable).omit({ id: true, createdAt: true });
+
+export type Wallet = typeof walletsTable.$inferSelect;
+export type Transaction = typeof transactionsTable.$inferSelect;
+export type WithdrawalRequest = typeof withdrawalRequestsTable.$inferSelect;
