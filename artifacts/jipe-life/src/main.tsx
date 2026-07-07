@@ -11,7 +11,7 @@ import { getToken } from "@/lib/api";
 
 setAuthTokenGetter(() => getToken());
 
-setBaseUrl("http://localhost:5000");
+setBaseUrl("https://jipe-life-api.onrender.com");
 
 createRoot(document.getElementById("root")!).render(
   <App />
