@@ -10,15 +10,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Gift, BadgeDollarSign, CheckCircle, Lock, Trophy } from "lucide-react";
 
 const MILESTONES = [
-  { index: 0, pairs: 25, rewardName: "T-Shirt", cashValue: 500 },
-  { index: 1, pairs: 50, rewardName: "Leather Bag", cashValue: 2000 },
-  { index: 2, pairs: 100, rewardName: "Trolley Bag", cashValue: 5000 },
-  { index: 3, pairs: 200, rewardName: "Cooling Freeze", cashValue: 15000 },
-  { index: 4, pairs: 500, rewardName: "Inverter Set", cashValue: 30000 },
-  { index: 5, pairs: 1000, rewardName: "Bike", cashValue: 80000 },
-  { index: 6, pairs: 10000, rewardName: "Jawa Bike", cashValue: 250000 },
-  { index: 7, pairs: 30000, rewardName: "Tata Punch Car", cashValue: 550000 },
-  { index: 8, pairs: 50000, rewardName: "Tata Sierra Car", cashValue: 1150000 },
+  { index: 0, pairs: 25, rewardName: "Premium Brand T-Shirt", cashValue: 500 },
+  { index: 1, pairs: 50, rewardName: "Executive Leather Bag", cashValue: 2000 },
+  { index: 2, pairs: 100, rewardName: "Premium Trolley Suitcase", cashValue: 5000 },
+  { index: 3, pairs: 200, rewardName: "Home Refrigerator Unit", cashValue: 15000 },
+  { index: 4, pairs: 500, rewardName: "Smart Inverter Power Backup", cashValue: 30000 },
+  { index: 5, pairs: 1000, rewardName: "Sports Motorcycle", cashValue: 80000 },
+  { index: 6, pairs: 10000, rewardName: "Cruiser Tourer Bike", cashValue: 250000 },
+  { index: 7, pairs: 30000, rewardName: "Tata Punch SUV", cashValue: 550000 },
+  { index: 8, pairs: 50000, rewardName: "Tata Sierra Luxury SUV", cashValue: 1150000 },
 ];
 
 export default function Rewards() {
@@ -27,8 +27,11 @@ export default function Rewards() {
   const { data, isLoading } = useGetRewards({ query: { queryKey: getGetRewardsQueryKey() } });
   const claim = useClaimReward();
 
-  function handleClaim(milestoneId: number, claimAs: "reward" | "cash") {
-    claim.mutate({ data: { milestoneId, claimAs } }, {
+  function handleClaim(
+  rewardId: number,
+  claimAs: "product" | "cash"
+) {
+    claim.mutate({ data: { rewardId, claimAs } }, {
       onSuccess: (res) => {
         qc.invalidateQueries({ queryKey: getGetRewardsQueryKey() });
         toast({
@@ -42,48 +45,101 @@ export default function Rewards() {
     });
   }
 
-  const lifetimePairs = data?.lifetimePairs ?? 0;
+ const rewardLevel = data?.rewardLevel ?? 0;
+const rewardPairCounter = data?.rewardPairCounter ?? 0;
+
+const nextMilestone = data?.nextMilestone;
 
   return (
     <MemberLayout>
       <div className="max-w-4xl">
         <div className="mb-6">
-          <h1 className="text-2xl font-black text-[#0F2D59]">Lifetime Rewards</h1>
-          <p className="text-sm text-muted-foreground">Cumulative pair milestones — no resets, no deadlines</p>
+          <h1 className="text-2xl font-black text-[#0F2D59]">
+  Reward Achievement Program
+</h1>
+
+<p className="text-sm text-muted-foreground">
+  Fresh pair milestones with automatic counter reset after every reward achievement
+</p>
         </div>
 
         {/* Progress Header */}
         <div className="bg-gradient-to-br from-[#0F2D59] to-[#1a3f70] rounded-xl p-6 text-white mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <Trophy size={24} className="text-amber-400" />
-            <div>
-              <p className="text-2xl font-black">{lifetimePairs.toLocaleString("en-IN")} Pairs</p>
-              <p className="text-blue-300 text-sm">Lifetime total</p>
-            </div>
-          </div>
-          {data?.nextMilestone && (
-            <>
-              <p className="text-blue-300 text-xs mb-2">Next: {data.nextMilestoneName} at {data.nextMilestone.toLocaleString("en-IN")} pairs</p>
-              <Progress
-                value={Math.min(100, (lifetimePairs / data.nextMilestone) * 100)}
-                className="h-2 bg-white/20"
-              />
-              <p className="text-xs text-blue-300 mt-1">
-                {Math.max(0, data.nextMilestone - lifetimePairs).toLocaleString("en-IN")} pairs to go
-              </p>
-            </>
-          )}
-        </div>
+  <div className="flex items-center gap-3 mb-4">
+    <Trophy size={24} className="text-amber-400" />
+    <div>
+      <p className="text-2xl font-black">
+        Level {rewardLevel}
+      </p>
+      <p className="text-blue-300 text-sm">
+        Current Reward Level
+      </p>
+    </div>
+  </div>
 
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <p className="text-blue-300 text-xs">
+        Fresh Pair Counter
+      </p>
+
+      <p className="text-xl font-bold">
+        {rewardPairCounter}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-blue-300 text-xs">
+        Next Reward
+      </p>
+
+      <p className="text-sm font-semibold">
+        {nextMilestone?.rewardName ?? "Completed"}
+      </p>
+    </div>
+  </div>
+
+  {nextMilestone && (
+    <>
+      <div className="mt-4">
+        <Progress
+          value={
+            (rewardPairCounter /
+              nextMilestone.pairs) * 100
+          }
+          className="h-2 bg-white/20"
+        />
+      </div>
+
+      <div className="flex justify-between text-xs mt-2">
+        <span>
+          {rewardPairCounter} / {nextMilestone.pairs}
+        </span>
+
+        <span>
+          {nextMilestone.remainingPairs}
+          {" "}Pairs Remaining
+        </span>
+      </div>
+    </>
+  )}
+</div>
         {/* Milestone Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {isLoading
             ? Array.from({ length: 9 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)
             : MILESTONES.map((m, idx) => {
-                const milestoneData = data?.milestones?.find(ms => ms.pairs === m.pairs);
-                const reached = lifetimePairs >= m.pairs;
-                const claimed = milestoneData?.claimed;
-                const claimedAs = milestoneData?.claimedAs;
+                const milestoneData =
+  data?.rewards?.find(
+    (r: any) => r.tier === m.index + 1
+  );
+                const reached = rewardLevel >= m.index + 1;
+                const claimed =
+  milestoneData?.status === "claimed" ||
+  milestoneData?.status === "approved" ||
+  milestoneData?.status === "delivered";
+                const claimedAs =
+  milestoneData?.rewardType;
 
                 return (
                   <div
@@ -120,7 +176,12 @@ export default function Rewards() {
                           variant="outline"
                           className="flex-1 text-xs gap-1 border-[#0F2D59] text-[#0F2D59] hover:bg-[#0F2D59] hover:text-white"
                           disabled={claim.isPending}
-                          onClick={() => handleClaim(idx, "reward")}
+                          onClick={() =>
+  handleClaim(
+    milestoneData.id,
+    "product"
+  )
+}
                           data-testid={`claim-reward-${m.pairs}`}
                         >
                           <Gift size={12} /> {m.rewardName}
@@ -129,7 +190,12 @@ export default function Rewards() {
                           size="sm"
                           className="flex-1 text-xs gap-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                           disabled={claim.isPending}
-                          onClick={() => handleClaim(idx, "cash")}
+                          onClick={() =>
+  handleClaim(
+    milestoneData.id,
+    "cash"
+  )
+}
                           data-testid={`claim-cash-${m.pairs}`}
                         >
                           <BadgeDollarSign size={12} /> {formatINR(m.cashValue)}
@@ -137,9 +203,27 @@ export default function Rewards() {
                       </div>
                     ) : (
                       <div className="mt-2">
-                        <Progress value={Math.min(100, (lifetimePairs / m.pairs) * 100)} className="h-1.5" />
-                        <p className="text-xs text-muted-foreground mt-1">{Math.max(0, m.pairs - lifetimePairs).toLocaleString("en-IN")} more pairs needed</p>
-                      </div>
+  <Progress
+    value={
+      m.index === rewardLevel
+        ? Math.min(
+            100,
+            (rewardPairCounter / m.pairs) * 100
+          )
+        : 0
+    }
+    className="h-1.5"
+  />
+
+  <p className="text-xs text-muted-foreground mt-1">
+    {m.index === rewardLevel
+      ? `${Math.max(
+          0,
+          m.pairs - rewardPairCounter
+        ).toLocaleString("en-IN")} more pairs needed`
+      : "Locked"}
+  </p>
+</div>
                     )}
                   </div>
                 );
