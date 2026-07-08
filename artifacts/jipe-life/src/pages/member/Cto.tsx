@@ -52,12 +52,37 @@ export default function Cto() {
         </div>
 
         {/* Pool Breakdown */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Smart Pool (5%)", key: "smartPool", share: pool?.smartPerShare, users: pool?.smartActiveUsers, accent: "border-blue-200 bg-blue-50" },
-            { label: "Silver Pool (10%)", key: "silverPool", share: pool?.silverPerShare, users: pool?.silverActiveUsers, accent: "border-gray-200 bg-gray-50" },
-            { label: "Gold Pool (15%)", key: "goldPool", share: pool?.goldPerShare, users: pool?.goldActiveUsers, accent: "border-amber-200 bg-amber-50" },
-          ].map(({ label, key, share, users, accent }) => (
+  {
+    label: "Starter Pool (4%)",
+    key: "starterPool",
+    share: pool?.starterPerShare,
+    users: pool?.starterActiveUsers,
+    accent: "border-sky-200 bg-sky-50",
+  },
+  {
+    label: "Smart Pool (6%)",
+    key: "smartPool",
+    share: pool?.smartPerShare,
+    users: pool?.smartActiveUsers,
+    accent: "border-blue-200 bg-blue-50",
+  },
+  {
+    label: "Silver Pool (8%)",
+    key: "silverPool",
+    share: pool?.silverPerShare,
+    users: pool?.silverActiveUsers,
+    accent: "border-gray-200 bg-gray-50",
+  },
+  {
+    label: "Gold Pool (12%)",
+    key: "goldPool",
+    share: pool?.goldPerShare,
+    users: pool?.goldActiveUsers,
+    accent: "border-amber-200 bg-amber-50",
+  },
+].map(({ label, key, share, users, accent }) => (
             <div key={key} className={`border rounded-xl p-5 ${accent}`}>
               <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">{label}</p>
               {poolLoading ? <Skeleton className="h-8 w-24 mb-2" /> : (
@@ -75,9 +100,10 @@ export default function Cto() {
           <h3 className="font-bold text-[#0F2D59] mb-3">How CTO Royalty Works</h3>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>• 30% of total global monthly turnover is allocated to the CTO pool.</p>
-            <p>• <strong>Smart Package:</strong> 5% of turnover ÷ total Smart active members</p>
-            <p>• <strong>Silver Package:</strong> 10% of turnover ÷ total Silver active members</p>
-            <p>• <strong>Gold Package:</strong> 15% of turnover ÷ total Gold active members</p>
+          <p>• <strong>Starter Package:</strong> 4% of turnover ÷ total Starter active members</p>
+<p>• <strong>Smart Package:</strong> 6% of turnover ÷ total Smart active members</p>
+<p>• <strong>Silver Package:</strong> 8% of turnover ÷ total Silver active members</p>
+<p>• <strong>Gold Package:</strong> 12% of turnover ÷ total Gold active members</p>
             <p>• Payouts continue until you recover 100% of your initial package cost.</p>
             <p>• Once 100% is recovered, CTO payouts terminate until a repurchase is done.</p>
           </div>
