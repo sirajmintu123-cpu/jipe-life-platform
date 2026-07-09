@@ -1,3 +1,5 @@
+import Presentation from "@/pages/Presentation";
+import "./presentation.css";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -5,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { getToken, getRole } from "@/lib/api";
+
 
 // Auth pages
 import Login from "@/pages/Login";
@@ -72,7 +75,8 @@ function Router() {
   return (
     <Switch>
       {/* Public */}
-      <Route path="/" component={Login} />
+      <Route path="/" component={Presentation} />
+<Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/admin" component={AdminLogin} />
 
