@@ -2,8 +2,8 @@ import { Link } from "wouter";
 import "./presentation.css";
 
 export default function Presentation() {
-  return (
-    <>
+return (
+  <div className="presentation-page">
       <header>
         <div className="container navbar">
           <div className="logo">
@@ -508,6 +508,6 @@ export default function Presentation() {
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
