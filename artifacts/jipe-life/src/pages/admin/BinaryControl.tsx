@@ -343,7 +343,7 @@ const engineStatus = {
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2 flex-1">
                   <Info size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-amber-800">
-                    This engine processes all active members in sequence. For each member, it matches equal left/right BV pairs, calculates payouts, and credits wallets. Run this once per day.
+                    This engine processes all active members in sequence. For each member, it matches equal left/right PV pairs, calculates payouts, and credits wallets. Run this once per day.
                   </p>
                 </div>
               </div>
@@ -462,10 +462,10 @@ const engineStatus = {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { label: "Matching Ratio", value: "1:1 (Left BV : Right BV)", icon: "⚖️", color: "text-indigo-600" },
+                  { label: "Matching Ratio", value: "1:1 (Left PV : Right PV)", icon: "⚖️", color: "text-indigo-600" },
                   { label: "Base Payout", value: "₹1,000 per pair", icon: "💰", color: "text-emerald-600" },
                   { label: "Daily Cap", value: "4 pairs = ₹4,000", icon: "📊", color: "text-blue-600" },
-                  { label: "Flush Zone", value: "Beyond 4BV (BV carried forward)", icon: "🔄", color: "text-amber-600" },
+                  { label: "Flush Zone", value: "Beyond 4PV (PV carried forward)", icon: "🔄", color: "text-amber-600" },
                   { label: "Jackpot Trigger", value: "Exactly 10 pairs", icon: "🎯", color: "text-purple-600" },
                   { label: "Jackpot Payout", value: "₹7,000 (₹5.2k + ₹1.8k bonus)", icon: "🏆", color: "text-amber-600" },
                   { label: "Beyond 4", value: "₹200/pair (unlimited depth)", icon: "🚀", color: "text-cyan-600" },

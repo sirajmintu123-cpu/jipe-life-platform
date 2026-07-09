@@ -29,7 +29,7 @@ function TreeNode({ node, depth = 0 }: { node: any; depth?: number }) {
         <p className="text-xs font-bold text-[#0F2D59] mt-0.5 truncate">{node.name}</p>
         <div className="flex justify-center mt-1">
           <Badge className={`text-[10px] px-1.5 py-0 border ${PACKAGE_COLORS[node.package] ?? ""}`}>
-            {node.package?.toUpperCase()} · {node.bv}BV
+            {node.package?.toUpperCase()} · {node.bv}PV
           </Badge>
         </div>
         {node.position !== "root" && (

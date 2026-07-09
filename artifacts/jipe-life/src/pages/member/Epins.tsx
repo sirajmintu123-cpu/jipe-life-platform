@@ -112,7 +112,7 @@ export default function Epins() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">{pin.package?.toUpperCase()}</Badge>
-                        <span className="text-xs text-muted-foreground">{formatINR(pin.packagePrice)} · {pin.bv} BV</span>
+                        <span className="text-xs text-muted-foreground">{formatINR(pin.packagePrice)} · {pin.bv} PV</span>
                       </div>
                     </div>
                     <Badge className={`text-xs ${STATUS_COLORS[pin.status] ?? ""}`}>{pin.status}</Badge>

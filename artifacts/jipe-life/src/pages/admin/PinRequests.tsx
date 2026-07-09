@@ -405,7 +405,7 @@ export default function AdminPinRequests() {
             </Card>
             <Card className="border-0 shadow-sm bg-gradient-to-br from-teal-50 to-white">
               <CardContent className="p-3">
-                <p className="text-xs text-muted-foreground">Total BV Generated</p>
+                <p className="text-xs text-muted-foreground">Total PV Generated</p>
                 <p className="text-lg font-bold text-teal-600">{totalBV}</p>
               </CardContent>
             </Card>
@@ -469,7 +469,7 @@ export default function AdminPinRequests() {
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Member</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Package</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Qty</th>
-                  <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">BV</th>
+                  <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">PV</th>
                   <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Total</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Payment Ref</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Payment Status</th>

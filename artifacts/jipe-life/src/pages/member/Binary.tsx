@@ -54,8 +54,8 @@ export default function Binary() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Left BV" value={stats?.leftBv ?? 0} icon={Network} accent="blue" />
-            <StatCard label="Right BV" value={stats?.rightBv ?? 0} icon={Network} accent="green" />
+            <StatCard label="Left PV" value={stats?.leftBv ?? 0} icon={Network} accent="blue" />
+            <StatCard label="Right PV" value={stats?.rightBv ?? 0} icon={Network} accent="green" />
             <StatCard label="Today's Pairs" value={stats?.todayPairs ?? 0} icon={Zap} accent={stats?.isJackpot ? "gold" : "blue"} />
             <StatCard label="Today's Earning" value={formatINR(stats?.todayEarning ?? 0)} icon={TrendingUp} accent="green" />
           </div>

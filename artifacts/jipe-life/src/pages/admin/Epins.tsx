@@ -47,10 +47,10 @@ const PKG_LABELS: Record<string, string> = {
 };
 
 const PKG_PRICES: Record<string, string> = {
-  starter: "₹1,100 · 0.5 BV",
-  smart: "₹2,100 · 1 BV",
-  silver: "₹5,200 · 2 BV",
-  gold: "₹10,100 · 4 BV",
+  starter: "₹1,100 · 0.5 PV",
+  smart: "₹2,100 · 1 PV",
+  silver: "₹5,200 · 2 PV",
+  gold: "₹10,100 · 4 PV",
 };
 
 export default function AdminEpins() {
@@ -132,7 +132,7 @@ export default function AdminEpins() {
   }
 
   function handleExportCSV() {
-    const headers = ["Pin", "Package", "Price", "BV", "Status", "Assigned To", "Created At"];
+    const headers = ["Pin", "Package", "Price", "PV", "Status", "Assigned To", "Created At"];
     const rows = data?.data?.map((p: any) => [
       p.pin,
       p.package,
@@ -463,10 +463,10 @@ export default function AdminEpins() {
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl><SelectTrigger data-testid="select-gen-package"><SelectValue placeholder="Select package" /></SelectTrigger></FormControl>
                           <SelectContent>
-                            <SelectItem value="starter">Starter — ₹1,100 (0.5 BV)</SelectItem>
-                            <SelectItem value="smart">Smart — ₹2,100 (1 BV)</SelectItem>
-                            <SelectItem value="silver">Silver — ₹5,200 (2 BV)</SelectItem>
-                            <SelectItem value="gold">Gold — ₹10,100 (4 BV)</SelectItem>
+                            <SelectItem value="starter">Starter — ₹1,100 (0.5 PV)</SelectItem>
+                            <SelectItem value="smart">Smart — ₹2,100 (1 PV)</SelectItem>
+                            <SelectItem value="silver">Silver — ₹5,200 (2 PV)</SelectItem>
+                            <SelectItem value="gold">Gold — ₹10,100 (4 PV)</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
