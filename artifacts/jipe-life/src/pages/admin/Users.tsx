@@ -115,7 +115,7 @@ export default function AdminUsers() {
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Name</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Sponsor</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Package</th>
-                  <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">BV</th>
+                  <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">PV</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Pairs</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Reward</th>
                   <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground uppercase">Wallet</th>
@@ -324,7 +324,7 @@ export default function AdminUsers() {
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">BV</CardTitle>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">PV</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="font-bold text-[#0F2D59]">{selectedUser.bv}</p>
@@ -376,7 +376,7 @@ export default function AdminUsers() {
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">Left BV</CardTitle>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Left PV</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="font-bold text-blue-600">{selectedUser.leftBv ?? 0}</p>
@@ -384,7 +384,7 @@ export default function AdminUsers() {
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">Right BV</CardTitle>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">Right PV</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="font-bold text-orange-600">{selectedUser.rightBv ?? 0}</p>
