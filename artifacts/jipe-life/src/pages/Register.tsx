@@ -14,15 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, ArrowLeft } from "lucide-react";
 
 const PACKAGE_COLORS: Record<string, string> = {
+  starter: "bg-green-100 text-green-800",
   smart: "bg-blue-100 text-blue-800",
   silver: "bg-gray-100 text-gray-800",
   gold: "bg-amber-100 text-amber-800",
 };
 
 const PACKAGE_PRICES: Record<string, string> = {
-  smart: "₹2,100 | 1 BV",
-  silver: "₹5,200 | 2 BV",
-  gold: "₹10,100 | 4 BV",
+  starter: "₹1,100 | 0.5 PV",
+  smart: "₹2,100 | 1 PV",
+  silver: "₹5,200 | 2 PV",
+  gold: "₹10,100 | 4 PV",
 };
 
 const schema = z.object({

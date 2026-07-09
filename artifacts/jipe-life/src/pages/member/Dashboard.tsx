@@ -57,8 +57,8 @@ export default function Dashboard() {
             <StatCard label="Today's Earning" value={formatINR(data?.todayEarning ?? 0)} icon={TrendingUp} accent="blue" />
             <StatCard label="Total Team Size" value={data?.totalTeamSize ?? 0} icon={Users} accent="gold" />
             <StatCard label="Lifetime Pairs" value={data?.totalPairs ?? 0} icon={BarChart3} accent="blue" />
-            <StatCard label="Left BV" value={data?.leftBv ?? 0} icon={BarChart3} accent="blue" sub="Binary volume left leg" />
-            <StatCard label="Right BV" value={data?.rightBv ?? 0} icon={BarChart3} accent="green" sub="Binary volume right leg" />
+            <StatCard label="Left PV" value={data?.leftBv ?? 0} icon={BarChart3} accent="blue" sub="Binary volume left leg" />
+            <StatCard label="Right PV" value={data?.rightBv ?? 0} icon={BarChart3} accent="green" sub="Binary volume right leg" />
             <StatCard label="Today's Pairs" value={data?.todayPairs ?? 0} icon={Zap} accent="gold" sub="Matched today" />
             <StatCard label="CTO Earned" value={formatINR(data?.ctoEarned ?? 0)} icon={Star} accent={data?.ctoActive ? "green" : "red"} sub={data?.ctoActive ? "Pool active" : "Recovery complete"} />
           </div>
@@ -95,12 +95,12 @@ export default function Dashboard() {
             <h3 className="text-sm font-bold text-[#0F2D59] mb-4">Binary Snapshot</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Left BV</span>
-                <span className="font-bold text-[#0F2D59]">{data?.leftBv ?? 0} BV</span>
+                <span className="text-sm text-muted-foreground">Left PV</span>
+                <span className="font-bold text-[#0F2D59]">{data?.leftBv ?? 0} PV</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Right BV</span>
-                <span className="font-bold text-emerald-600">{data?.rightBv ?? 0} BV</span>
+                <span className="text-sm text-muted-foreground">Right PV</span>
+                <span className="font-bold text-emerald-600">{data?.rightBv ?? 0} PV</span>
               </div>
               <div className="border-t border-border pt-3 flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Today's Pairs</span>
