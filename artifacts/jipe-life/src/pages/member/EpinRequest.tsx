@@ -21,9 +21,10 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 }
 
 const PACKAGES: Record<string, { price: number; bv: number; label: string }> = {
-  smart: { price: 2100, bv: 1, label: "Smart — ₹2,100 (1 BV)" },
-  silver: { price: 5200, bv: 2, label: "Silver — ₹5,200 (2 BV)" },
-  gold: { price: 10100, bv: 4, label: "Gold — ₹10,100 (4 BV)" },
+  starter: { price: 1100, bv: 0.5, label: "Starter — ₹1,100 (0.5 PV)" },
+  smart: { price: 2100, bv: 1, label: "Smart — ₹2,100 (1 PV)" },
+  silver: { price: 5200, bv: 2, label: "Silver — ₹5,200 (2 PV)" },
+  gold: { price: 10100, bv: 4, label: "Gold — ₹10,100 (4 PV)" },
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -33,6 +34,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const PKG_COLORS: Record<string, string> = {
+  starter: "bg-green-100 text-green-800",
   smart: "bg-blue-100 text-blue-800",
   silver: "bg-gray-100 text-gray-700",
   gold: "bg-amber-100 text-amber-800",

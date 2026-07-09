@@ -180,7 +180,7 @@ return (
             <h3>Starter</h3>
             <div className="price">₹1,100</div>
             <ul>
-              <li>0.5 BV Allocation</li>
+              <li>0.5 PV Allocation</li>
               <li>Luxury Rewards</li>
               <li>4% CTO Pool</li>
               <li>Priority Support</li>
@@ -199,7 +199,7 @@ return (
               <h3>Smart</h3>
               <div className="price">₹2,100</div>
               <ul>
-                <li>1 BV Allocation</li>
+                <li>1 PV Allocation</li>
                 <li>6% Smart CTO Benefits</li>
                 <li>Binary Matching Income</li>
                 <li>Secure Activation</li>
@@ -217,7 +217,7 @@ return (
               <h3>Silver</h3>
               <div className="price">₹5,200</div>
               <ul>
-                <li>2 BV Allocation</li>
+                <li>2 PV Allocation</li>
                 <li>Leadership Rewards</li>
                 <li>8% Higher CTO Pool</li>
                 <li>Priority Support</li>
@@ -234,7 +234,7 @@ return (
               <h3>Gold</h3>
               <div className="price">₹10,100</div>
               <ul>
-                <li>4 BV Allocation</li>
+                <li>4 PV Allocation</li>
                 <li>Premium Matching</li>
                 <li>12% Global CTO Pool</li>
                 <li>Luxury Reward Eligible</li>
