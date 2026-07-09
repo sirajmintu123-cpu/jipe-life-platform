@@ -1,5 +1,4 @@
 import Presentation from "@/pages/Presentation";
-import "./presentation.css";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
