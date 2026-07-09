@@ -26,7 +26,7 @@ a {
 /* =========================================
    COMPACT HEADER & COLORFUL BUTTONS
    ========================================= */
-header {
+.presentation-page header {
   position: fixed;
   top: 0;
   left: 0;
@@ -37,14 +37,14 @@ header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.navbar {
+.presentation-page .navbar {
   display: flex;
   justify-content: space-between; 
   align-items: center;
   padding: 12px 0; 
 }
 
-.logo {
+.presentation-page .logo {
   font-size: 24px; 
   font-weight: 900;
   color: white;
@@ -54,7 +54,7 @@ header {
   color: var(--gold);
 }
 
-.nav-buttons {
+.presentation-page .nav-buttons {
   display: flex;
   gap: 15px; 
   align-items: center;
