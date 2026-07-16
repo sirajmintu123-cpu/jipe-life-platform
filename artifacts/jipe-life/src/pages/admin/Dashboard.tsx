@@ -2,7 +2,7 @@ import AdminLayout from "@/components/AdminLayout";
 import { useGetAdminDashboard, getGetAdminDashboardQueryKey } from "@workspace/api-client-react";
 import { formatINR } from "@/lib/api";
 import StatCard from "@/components/StatCard";
-import { Users, UserCheck, UserPlus, TrendingUp, Gift, Layers, } from "lucide-react";
+import { Users, UserCheck, UserPlus, TrendingUp, Gift, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -25,65 +25,48 @@ export default function AdminDashboard() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <StatCard label="Total Members" value={data?.totalMembers ?? 0} icon={Users} accent="blue" />
             <StatCard label="Active Members" value={data?.activeMembers ?? 0} icon={UserCheck} accent="green" />
             <StatCard label="Today's Registrations" value={data?.todayRegistrations ?? 0} icon={UserPlus} accent="gold" />
             <StatCard label="Total Turnover" value={formatINR(data?.totalTurnover ?? 0)} icon={TrendingUp} accent="blue" />
             <StatCard
-  label="Lifetime Pairs"
-  value={data?.binarySummary?.lifetimePairs ?? 0}
-  icon={Layers}
-  accent="blue"
-/>
-
-<StatCard
-  label="Reward Cash Paid"
-  value={formatINR(data?.rewardSummary?.cashPaid ?? 0)}
-  icon={Gift}
-  accent="green"
-/>
-
-<StatCard
-  label="Current CTO Pool"
-  value={formatINR(
-    (data?.ctoSummary?.starterPool ?? 0) +
-    (data?.ctoSummary?.smartPool ?? 0) +
-    (data?.ctoSummary?.silverPool ?? 0) +
-    (data?.ctoSummary?.goldPool ?? 0)
-  )}
-  icon={TrendingUp}
-  accent="gold"
-/>
+              label="Lifetime Pairs"
+              value={data?.binarySummary?.lifetimePairs ?? 0}
+              icon={Layers}
+              accent="blue"
+            />
+            <StatCard
+              label="Reward Cash Paid"
+              value={formatINR(data?.rewardSummary?.cashPaid ?? 0)}
+              icon={Gift}
+              accent="green"
+            />
+            <StatCard
+              label="Current CTO Pool"
+              value={formatINR(
+                (data?.ctoSummary?.starterPool ?? 0) +
+                (data?.ctoSummary?.smartPool ?? 0) +
+                (data?.ctoSummary?.silverPool ?? 0) +
+                (data?.ctoSummary?.goldPool ?? 0)
+              )}
+              icon={TrendingUp}
+              accent="gold"
+            />
             <div className="bg-white rounded-xl border border-amber-100 p-5 shadow-sm">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-2">Package Breakdown</p>
               <div className="space-y-1.5">
-               {[
-  {
-    label: "Starter",
-    count: data?.packageBreakdown?.starter,
-    color: "bg-sky-100 text-sky-800"
-  },
-  {
-    label: "Smart",
-    count: data?.packageBreakdown?.smart,
-    color: "bg-blue-100 text-blue-800"
-  },
-  {
-    label: "Silver",
-    count: data?.packageBreakdown?.silver,
-    color: "bg-gray-100 text-gray-800"
-  },
-  {
-    label: "Gold",
-    count: data?.packageBreakdown?.gold,
-    color: "bg-amber-100 text-amber-800"
-  },
-].map(({ label, count, color }) => (   <div key={label} className="flex items-center justify-between">
+                {[
+                  { label: "Starter", count: data?.packageBreakdown?.starter, color: "bg-sky-100 text-sky-800" },
+                  { label: "Smart", count: data?.packageBreakdown?.smart, color: "bg-blue-100 text-blue-800" },
+                  { label: "Silver", count: data?.packageBreakdown?.silver, color: "bg-gray-100 text-gray-800" },
+                  { label: "Gold", count: data?.packageBreakdown?.gold, color: "bg-amber-100 text-amber-800" },
+                ].map(({ label, count, color }) => (
+                  <div key={label} className="flex items-center justify-between">
                     <Badge className={`text-xs ${color}`}>{label}</Badge>
                     <span className="text-sm font-bold">{count ?? 0}</span>
                   </div>
