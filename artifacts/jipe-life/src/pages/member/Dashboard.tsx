@@ -48,11 +48,11 @@ export default function Dashboard() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             <StatCard label="Available Balance" value={formatINR(data?.availableBalance ?? 0)} icon={Wallet} accent="green" />
             <StatCard label="Today's Earning" value={formatINR(data?.todayEarning ?? 0)} icon={TrendingUp} accent="blue" />
             <StatCard label="Total Team Size" value={data?.totalTeamSize ?? 0} icon={Users} accent="gold" />
