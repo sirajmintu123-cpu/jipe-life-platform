@@ -7,476 +7,79 @@ servers:
   - url: /api
     description: Base API path
 tags:
-  - name: health
-    description: Health operations
-  - name: auth
-    description: Authentication
-  - name: users
-    description: User management
-  - name: epins
-    description: E-Pin management
-  - name: binary
-    description: Binary tree and matching engine
-  - name: wallet
-    description: Wallet and transactions
-  - name: cto
-    description: CTO royalty pool
-  - name: rewards
-    description: Lifetime reward system
   - name: admin
     description: Admin operations
+  - name: auth
+    description: Authentication
+  - name: binary
+    description: Binary tree and matching engine
+  - name: cto
+    description: CTO royalty pool
+  - name: epins
+    description: E-Pin management
+  - name: health
+    description: Health operations
+  - name: rewards
+    description: Lifetime reward system
+  - name: users
+    description: User management
+  - name: wallet
+    description: Wallet and transactions
 
 paths:
-  /healthz:
-    get:
-      operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      responses:
-        "200":
-          description: Healthy
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/HealthStatus"
-
-  # ── AUTH ──────────────────────────────────────────────────────────────────
-  /auth/validate-sponsor:
-    get:
-      operationId: validateSponsor
-      tags: [auth]
-      summary: Validate sponsor ID and return sponsor name
-      parameters:
-        - name: sponsorId
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Sponsor info
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SponsorInfo"
-        "404":
-          description: Sponsor not found
-
-  /auth/validate-epin:
-    get:
-      operationId: validateEpin
-      tags: [auth]
-      summary: Validate E-Pin and return package info
-      parameters:
-        - name: pin
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: E-Pin package info
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EpinValidation"
-        "400":
-          description: Invalid or used pin
-
-  /auth/register:
-    post:
-      operationId: registerUser
-      tags: [auth]
-      summary: Register a new user with E-Pin
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RegisterInput"
-      responses:
-        "201":
-          description: Registered
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "400":
-          description: Validation error
-
-  /auth/login:
-    post:
-      operationId: loginUser
-      tags: [auth]
-      summary: Login with member ID and password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginInput"
-      responses:
-        "200":
-          description: Login successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
-          description: Invalid credentials
-
-  /auth/admin/login:
-    post:
-      operationId: adminLogin
-      tags: [auth]
-      summary: Admin login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginInput"
-      responses:
-        "200":
-          description: Admin login successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
-          description: Unauthorized
-
-  /auth/logout:
-    post:
-      operationId: logoutUser
-      tags: [auth]
-      summary: Logout current session
-      responses:
-        "200":
-          description: Logged out
-
-  /auth/me:
-    get:
-      operationId: getMe
-      tags: [auth]
-      summary: Get current authenticated user
-      responses:
-        "200":
-          description: Current user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "401":
-          description: Unauthenticated
-
-  # ── USERS ─────────────────────────────────────────────────────────────────
-  /users/dashboard:
-    get:
-      operationId: getUserDashboard
-      tags: [users]
-      summary: Get dashboard stats for current user
-      responses:
-        "200":
-          description: Dashboard stats
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DashboardStats"
-
-  /users/binary-tree:
-    get:
-      operationId: getBinaryTree
-      tags: [users]
-      summary: Get binary tree structure for current user
-      parameters:
-        - name: depth
-          in: query
-          schema:
-            type: integer
-            default: 3
-      responses:
-        "200":
-          description: Binary tree nodes
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BinaryNode"
-
-  /users/profile:
-    get:
-      operationId: getUserProfile
-      tags: [users]
-      summary: Get current user profile
-      responses:
-        "200":
-          description: Profile
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-    patch:
-      operationId: updateUserProfile
-      tags: [users]
-      summary: Update user profile
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProfileUpdate"
-      responses:
-        "200":
-          description: Updated profile
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-
-  # ── E-PINS ────────────────────────────────────────────────────────────────
-  /epins:
-    get:
-      operationId: listMyEpins
-      tags: [epins]
-      summary: List current user's E-Pins
-      parameters:
-        - name: status
-          in: query
-          schema:
-            type: string
-            enum: [unused, used, transferred]
-      responses:
-        "200":
-          description: E-Pin list
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Epin"
-
-  /epins/transfer:
-    post:
-      operationId: transferEpin
-      tags: [epins]
-      summary: Transfer an E-Pin to a downline member (OTP verified)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EpinTransferInput"
-      responses:
-        "200":
-          description: Transfer successful
-        "400":
-          description: Transfer failed
-
-  /epins/history:
-    get:
-      operationId: getEpinHistory
-      tags: [epins]
-      summary: Get E-Pin transfer history
-      responses:
-        "200":
-          description: History
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EpinHistoryEntry"
-
-  # ── BINARY ENGINE ─────────────────────────────────────────────────────────
-  /binary/stats:
-    get:
-      operationId: getBinaryStats
-      tags: [binary]
-      summary: Get left/right BV, today's pairs, and capping info
-      responses:
-        "200":
-          description: Binary stats
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BinaryStats"
-
-  /binary/history:
-    get:
-      operationId: getBinaryHistory
-      tags: [binary]
-      summary: Get pair matching history
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
-      responses:
-        "200":
-          description: Matching history
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BinaryHistoryPage"
-
-  # ── WALLET ────────────────────────────────────────────────────────────────
-  /wallet:
-    get:
-      operationId: getWallet
-      tags: [wallet]
-      summary: Get wallet balance and summary
-      responses:
-        "200":
-          description: Wallet info
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WalletInfo"
-
-  /wallet/transactions:
-    get:
-      operationId: getTransactions
-      tags: [wallet]
-      summary: Get transaction history
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
-        - name: type
-          in: query
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Transactions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TransactionPage"
-
-  /wallet/withdraw:
-    post:
-      operationId: requestWithdrawal
-      tags: [wallet]
-      summary: Submit a withdrawal request
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/WithdrawalInput"
-      responses:
-        "201":
-          description: Request submitted
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WithdrawalRequest"
-
-  /wallet/withdrawals:
-    get:
-      operationId: getMyWithdrawals
-      tags: [wallet]
-      summary: Get user's withdrawal requests
-      responses:
-        "200":
-          description: Withdrawal requests
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/WithdrawalRequest"
-
-  # ── CTO POOL ──────────────────────────────────────────────────────────────
-  /cto/current:
-    get:
-      operationId: getCtoPoolStatus
-      tags: [cto]
-      summary: Get current month CTO pool amounts
-      responses:
-        "200":
-          description: CTO pool status
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CtoPoolStatus"
-
-  /cto/history:
-    get:
-      operationId: getCtoHistory
-      tags: [cto]
-      summary: Get user's CTO royalty payout history
-      responses:
-        "200":
-          description: CTO history
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CtoDistribution"
-
-  /cto/recovery-status:
-    get:
-      operationId: getCtoRecoveryStatus
-      tags: [cto]
-      summary: Get 100% recovery status for user's package cost
-      responses:
-        "200":
-          description: Recovery status
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CtoRecoveryStatus"
-
-  # ── REWARDS ───────────────────────────────────────────────────────────────
-  /rewards:
-    get:
-      operationId: getRewards
-      tags: [rewards]
-      summary: Get user's lifetime reward progress
-      responses:
-        "200":
-          description: Rewards
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RewardProgress"
-
-  /rewards/claim:
-    post:
-      operationId: claimReward
-      tags: [rewards]
-      summary: Claim a reward at a milestone (choose reward or cash)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RewardClaimInput"
-      responses:
-        "200":
-          description: Claimed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RewardClaim"
-
   # ── ADMIN ─────────────────────────────────────────────────────────────────
+  /admin/binary/dashboard:
+    get:
+      operationId: getBinaryDashboard
+      tags: [admin]
+      summary: Get binary dashboard statistics
+      responses:
+        "200":
+          description: Binary dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BinaryDashboardResponse"
+
+  /admin/binary/engine-status:
+    get:
+      operationId: getBinaryEngineStatus
+      tags: [admin]
+      summary: Get binary engine status
+      responses:
+        "200":
+          description: Engine status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BinaryEngineStatusResponse"
+
+  /admin/cron/run-binary:
+    post:
+      operationId: adminRunBinaryMatching
+      tags: [admin]
+      summary: Manually trigger daily binary matching engine
+      responses:
+        "200":
+          description: Matching complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CronResult"
+
+  /admin/cron/run-cto:
+    post:
+      operationId: adminRunCtoDistribution
+      tags: [admin]
+      summary: Manually trigger monthly CTO pool distribution
+      responses:
+        "200":
+          description: Distribution complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CronResult"
+
   /admin/dashboard:
     get:
       operationId: getAdminDashboard
@@ -489,27 +92,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminDashboardStats"
-
-  /admin/epins/generate:
-    post:
-      operationId: adminGenerateEpins
-      tags: [admin]
-      summary: Bulk generate E-Pins for a package
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EpinGenerateInput"
-      responses:
-        "201":
-          description: Generated pins
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Epin"
 
   /admin/epins:
     get:
@@ -552,6 +134,42 @@ paths:
       responses:
         "200":
           description: Assigned
+
+  /admin/epins/generate:
+    post:
+      operationId: adminGenerateEpins
+      tags: [admin]
+      summary: Bulk generate E-Pins for a package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EpinGenerateInput"
+      responses:
+        "201":
+          description: Generated pins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Epin"
+
+  /admin/turnover:
+    post:
+      operationId: adminAddTurnover
+      tags: [admin]
+      summary: Record global monthly turnover (CTO input)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TurnoverInput"
+      responses:
+        "201":
+          description: Recorded
 
   /admin/users:
     get:
@@ -679,137 +297,495 @@ paths:
         "200":
           description: Rejected
 
-  /admin/cron/run-binary:
+  # ── AUTH ──────────────────────────────────────────────────────────────────
+  /auth/admin/login:
     post:
-      operationId: adminRunBinaryMatching
-      tags: [admin]
-      summary: Manually trigger daily binary matching engine
-      responses:
-        "200":
-          description: Matching complete
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CronResult"
-            
-            /admin/binary/dashboard:
-  get:
-    operationId: getBinaryDashboard
-    tags: [admin]
-    summary: Get binary dashboard statistics
-    responses:
-      "200":
-        description: Binary dashboard
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BinaryDashboardResponse"
-
-/admin/binary/engine-status:
-  get:
-    operationId: getBinaryEngineStatus
-    tags: [admin]
-    summary: Get binary engine status
-    responses:
-      "200":
-        description: Engine status
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BinaryEngineStatusResponse"
-
-  /admin/cron/run-cto:
-    post:
-      operationId: adminRunCtoDistribution
-      tags: [admin]
-      summary: Manually trigger monthly CTO pool distribution
-      responses:
-        "200":
-          description: Distribution complete
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CronResult"
-
-  /admin/turnover:
-    post:
-      operationId: adminAddTurnover
-      tags: [admin]
-      summary: Record global monthly turnover (CTO input)
+      operationId: adminLogin
+      tags: [auth]
+      summary: Admin login
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TurnoverInput"
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Admin login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/login:
+    post:
+      operationId: loginUser
+      tags: [auth]
+      summary: Login with member ID and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logoutUser
+      tags: [auth]
+      summary: Logout current session
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthenticated
+
+  /auth/register:
+    post:
+      operationId: registerUser
+      tags: [auth]
+      summary: Register a new user with E-Pin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
       responses:
         "201":
-          description: Recorded
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+
+  /auth/validate-epin:
+    get:
+      operationId: validateEpin
+      tags: [auth]
+      summary: Validate E-Pin and return package info
+      parameters:
+        - name: pin
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: E-Pin package info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EpinValidation"
+        "400":
+          description: Invalid or used pin
+
+  /auth/validate-sponsor:
+    get:
+      operationId: validateSponsor
+      tags: [auth]
+      summary: Validate sponsor ID and return sponsor name
+      parameters:
+        - name: sponsorId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sponsor info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsorInfo"
+        "404":
+          description: Sponsor not found
+
+  # ── BINARY ENGINE ─────────────────────────────────────────────────────────
+  /binary/history:
+    get:
+      operationId: getBinaryHistory
+      tags: [binary]
+      summary: Get pair matching history
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Matching history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BinaryHistoryPage"
+
+  /binary/stats:
+    get:
+      operationId: getBinaryStats
+      tags: [binary]
+      summary: Get left/right BV, today's pairs, and capping info
+      responses:
+        "200":
+          description: Binary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BinaryStats"
+
+  # ── CTO POOL ──────────────────────────────────────────────────────────────
+  /cto/current:
+    get:
+      operationId: getCtoPoolStatus
+      tags: [cto]
+      summary: Get current month CTO pool amounts
+      responses:
+        "200":
+          description: CTO pool status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CtoPoolStatus"
+
+  /cto/history:
+    get:
+      operationId: getCtoHistory
+      tags: [cto]
+      summary: Get user's CTO royalty payout history
+      responses:
+        "200":
+          description: CTO history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CtoDistribution"
+
+  /cto/recovery-status:
+    get:
+      operationId: getCtoRecoveryStatus
+      tags: [cto]
+      summary: Get 100% recovery status for user's package cost
+      responses:
+        "200":
+          description: Recovery status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CtoRecoveryStatus"
+
+  # ── E-PINS ────────────────────────────────────────────────────────────────
+  /epins:
+    get:
+      operationId: listMyEpins
+      tags: [epins]
+      summary: List current user's E-Pins
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [unused, used, transferred]
+      responses:
+        "200":
+          description: E-Pin list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Epin"
+
+  /epins/history:
+    get:
+      operationId: getEpinHistory
+      tags: [epins]
+      summary: Get E-Pin transfer history
+      responses:
+        "200":
+          description: History
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EpinHistoryEntry"
+
+  /epins/transfer:
+    post:
+      operationId: transferEpin
+      tags: [epins]
+      summary: Transfer an E-Pin to a downline member (OTP verified)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EpinTransferInput"
+      responses:
+        "200":
+          description: Transfer successful
+        "400":
+          description: Transfer failed
+
+  # ── HEALTH ────────────────────────────────────────────────────────────────
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── REWARDS ───────────────────────────────────────────────────────────────
+  /rewards:
+    get:
+      operationId: getRewards
+      tags: [rewards]
+      summary: Get user's lifetime reward progress
+      responses:
+        "200":
+          description: Rewards
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RewardProgress"
+
+  /rewards/claim:
+    post:
+      operationId: claimReward
+      tags: [rewards]
+      summary: Claim a reward at a milestone (choose reward or cash)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RewardClaimInput"
+      responses:
+        "200":
+          description: Claimed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RewardClaim"
+
+  # ── USERS ─────────────────────────────────────────────────────────────────
+  /users/binary-tree:
+    get:
+      operationId: getBinaryTree
+      tags: [users]
+      summary: Get binary tree structure for current user
+      parameters:
+        - name: depth
+          in: query
+          schema:
+            type: integer
+            default: 3
+      responses:
+        "200":
+          description: Binary tree nodes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BinaryNode"
+
+  /users/dashboard:
+    get:
+      operationId: getUserDashboard
+      tags: [users]
+      summary: Get dashboard stats for current user
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /users/profile:
+    get:
+      operationId: getUserProfile
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUserProfile
+      tags: [users]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ── WALLET ────────────────────────────────────────────────────────────────
+  /wallet:
+    get:
+      operationId: getWallet
+      tags: [wallet]
+      summary: Get wallet balance and summary
+      responses:
+        "200":
+          description: Wallet info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletInfo"
+
+  /wallet/transactions:
+    get:
+      operationId: getTransactions
+      tags: [wallet]
+      summary: Get transaction history
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: type
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionPage"
+
+  /wallet/withdraw:
+    post:
+      operationId: requestWithdrawal
+      tags: [wallet]
+      summary: Submit a withdrawal request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawalInput"
+      responses:
+        "201":
+          description: Request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WithdrawalRequest"
+
+  /wallet/withdrawals:
+    get:
+      operationId: getMyWithdrawals
+      tags: [wallet]
+      summary: Get user's withdrawal requests
+      responses:
+        "200":
+          description: Withdrawal requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WithdrawalRequest"
 
 components:
   schemas:
-    HealthStatus:
+    AdminDashboardStats:
       type: object
-      required: [status]
+      required: [totalMembers, activeMembers, todayRegistrations, totalTurnover, pendingWithdrawals, totalWithdrawals, adminFeeCollected, packageBreakdown]
       properties:
-        status:
-          type: string
-
-    SponsorInfo:
-      type: object
-      required: [memberId, name]
-      properties:
-        memberId:
-          type: string
-        name:
-          type: string
-        package:
-          type: string
-
-    EpinValidation:
-      type: object
-      required: [pin, package, packagePrice, bv, valid]
-      properties:
-        pin:
-          type: string
-        package:
-          type: string
-          enum: [smart, silver, gold]
-        packagePrice:
+        totalMembers:
           type: integer
-        bv:
+        activeMembers:
           type: integer
-        valid:
-          type: boolean
+        todayRegistrations:
+          type: integer
+        totalTurnover:
+          type: number
+        pendingWithdrawals:
+          type: integer
+        totalWithdrawals:
+          type: number
+        adminFeeCollected:
+          type: number
+        packageBreakdown:
+          $ref: "#/components/schemas/PackageBreakdown"
+        recentRegistrations:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
 
-    RegisterInput:
+    AdminUserDetail:
       type: object
-      required: [sponsorId, epin, name, email, phone, password]
+      required: [user, wallet, binaryStats, ctoStatus]
       properties:
-        sponsorId:
-          type: string
-        epin:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        password:
-          type: string
-        position:
-          type: string
-          enum: [left, right]
-
-    LoginInput:
-      type: object
-      required: [memberId, password]
-      properties:
-        memberId:
-          type: string
-        password:
-          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        wallet:
+          $ref: "#/components/schemas/WalletInfo"
+        binaryStats:
+          $ref: "#/components/schemas/BinaryStats"
+        ctoStatus:
+          $ref: "#/components/schemas/CtoRecoveryStatus"
 
     AuthResponse:
       type: object
@@ -820,175 +796,49 @@ components:
         token:
           type: string
 
-    User:
-      type: object
-      required: [id, memberId, name, email, phone, package, bv, status, role, createdAt]
-      properties:
-        id:
-          type: integer
-        memberId:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        package:
-          type: string
-          enum: [smart, silver, gold]
-        bv:
-          type: integer
-        status:
-          type: string
-          enum: [active, blocked, inactive]
-        role:
-          type: string
-          enum: [member, admin]
-        sponsorId:
-          type: ["integer", "null"]
-        leftChildId:
-          type: ["integer", "null"]
-        rightChildId:
-          type: ["integer", "null"]
-        ctoActive:
-          type: boolean
-        createdAt:
-          type: string
-
-    ProfileUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-        phone:
-          type: string
-        bankAccount:
-          type: string
-        bankName:
-          type: string
-        ifscCode:
-          type: string
-        upiId:
-          type: string
-
-    DashboardStats:
-      type: object
-      required: [availableBalance, todayEarning, totalTeamSize, leftBv, rightBv, totalPairs, todayPairs, package, ctoActive, ctoEarned, packageCost]
-      properties:
-        availableBalance:
-          type: number
-        todayEarning:
-          type: number
-        totalTeamSize:
-          type: integer
-        leftBv:
-          type: integer
-        rightBv:
-          type: integer
-        totalPairs:
-          type: integer
-        todayPairs:
-          type: integer
-        package:
-          type: string
-        ctoActive:
-          type: boolean
-        ctoEarned:
-          type: number
-        packageCost:
-          type: integer
-        recentTransactions:
-          type: array
-          items:
-            $ref: "#/components/schemas/Transaction"
-
-    BinaryNode:
-      type: object
-      required: [id, memberId, name, package, bv, position]
-      properties:
-        id:
-          type: integer
-        memberId:
-          type: string
-        name:
-          type: string
-        package:
-          type: string
-        bv:
-          type: integer
-        position:
-          type: string
-          enum: [root, left, right]
-        left:
-          $ref: "#/components/schemas/BinaryNode"
-        right:
-          $ref: "#/components/schemas/BinaryNode"
-
     BinaryDashboardResponse:
-  type: object
-  properties:
-    activeMembers:
-      type: number
-    todayPairs:
-      type: number
-    matchingIncome:
-      type: number
-    jackpotBonus:
-      type: number
-    netPayout:
-      type: number
-    membersWithPairs:
-      type: number
-    membersWithoutPairs:
-      type: number
-    membersNearJackpot:
-      type: number
-    rewardAchievements:
-      type: number
-    ctoStarter:
-      type: number
-    ctoSmart:
-      type: number
-    ctoSilver:
-      type: number
-    ctoGold:
-      type: number
+      type: object
+      properties:
+        activeMembers:
+          type: number
+        todayPairs:
+          type: number
+        matchingIncome:
+          type: number
+        jackpotBonus:
+          type: number
+        netPayout:
+          type: number
+        membersWithPairs:
+          type: number
+        membersWithoutPairs:
+          type: number
+        membersNearJackpot:
+          type: number
+        rewardAchievements:
+          type: number
+        ctoStarter:
+          type: number
+        ctoSmart:
+          type: number
+        ctoSilver:
+          type: number
+        ctoGold:
+          type: number
 
     BinaryEngineStatusResponse:
       type: object
       properties:
-    status:
-      type: string
-    statusMessage:
-      type: string
-    lastRunDate:
-      type: string
-    lastRunTime:
-      type: string
-    nextScheduledRun:
-      type: string
-
-    BinaryStats:
-      type: object
-      required: [leftBv, rightBv, todayPairs, todayEarning, isCapped, carryForwardBv, lifetimePairs]
-      properties:
-        leftBv:
-          type: integer
-        rightBv:
-          type: integer
-        todayPairs:
-          type: integer
-        todayEarning:
-          type: number
-        isCapped:
-          type: boolean
-        isJackpot:
-          type: boolean
-        carryForwardBv:
-          type: integer
-        lifetimePairs:
-          type: integer
+        status:
+          type: string
+        statusMessage:
+          type: string
+        lastRunDate:
+          type: string
+        lastRunTime:
+          type: string
+        nextScheduledRun:
+          type: string
 
     BinaryHistoryEntry:
       type: object
@@ -1024,149 +874,78 @@ components:
         limit:
           type: integer
 
-    Epin:
+    BinaryNode:
       type: object
-      required: [id, pin, package, packagePrice, bv, status, createdAt]
+      required: [id, memberId, name, package, bv, position]
       properties:
         id:
           type: integer
-        pin:
+        memberId:
+          type: string
+        name:
           type: string
         package:
           type: string
-          enum: [smart, silver, gold]
-        packagePrice:
-          type: integer
         bv:
           type: integer
-        status:
+        position:
           type: string
-          enum: [unused, used, transferred]
-        assignedToId:
-          type: ["integer", "null"]
-        assignedToName:
-          type: ["string", "null"]
-        transferredToId:
-          type: ["integer", "null"]
-        createdAt:
-          type: string
-        usedAt:
-          type: ["string", "null"]
+          enum: [root, left, right]
+        left:
+          $ref: "#/components/schemas/BinaryNode"
+        right:
+          $ref: "#/components/schemas/BinaryNode"
 
-    EpinTransferInput:
+    BinaryStats:
       type: object
-      required: [pinId, recipientMemberId, otp]
+      required: [leftBv, rightBv, todayPairs, todayEarning, isCapped, carryForwardBv, lifetimePairs]
       properties:
-        pinId:
+        leftBv:
           type: integer
-        recipientMemberId:
-          type: string
-        otp:
-          type: string
+        rightBv:
+          type: integer
+        todayPairs:
+          type: integer
+        todayEarning:
+          type: number
+        isCapped:
+          type: boolean
+        isJackpot:
+          type: boolean
+        carryForwardBv:
+          type: integer
+        lifetimePairs:
+          type: integer
 
-    EpinHistoryEntry:
+    CronResult:
       type: object
-      required: [id, pin, package, action, date]
+      required: [success, message, processedCount]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        processedCount:
+          type: integer
+
+    CtoDistribution:
+      type: object
+      required: [id, month, year, amount, package, cumulativeReceived, isTerminated]
       properties:
         id:
           type: integer
-        pin:
-          type: string
+        month:
+          type: integer
+        year:
+          type: integer
+        amount:
+          type: number
         package:
           type: string
-        action:
-          type: string
-        fromName:
-          type: ["string", "null"]
-        toName:
-          type: ["string", "null"]
-        date:
-          type: string
-
-    WalletInfo:
-      type: object
-      required: [balance, totalEarned, totalWithdrawn, pendingWithdrawal]
-      properties:
-        balance:
+        cumulativeReceived:
           type: number
-        totalEarned:
-          type: number
-        totalWithdrawn:
-          type: number
-        pendingWithdrawal:
-          type: number
-        bankAccount:
-          type: ["string", "null"]
-        upiId:
-          type: ["string", "null"]
-
-    Transaction:
-      type: object
-      required: [id, type, amount, description, createdAt]
-      properties:
-        id:
-          type: integer
-        type:
-          type: string
-        amount:
-          type: number
-        description:
-          type: string
-        createdAt:
-          type: string
-        status:
-          type: string
-
-    TransactionPage:
-      type: object
-      required: [data, total, page, limit]
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/Transaction"
-        total:
-          type: integer
-        page:
-          type: integer
-        limit:
-          type: integer
-
-    WithdrawalInput:
-      type: object
-      required: [amount, method]
-      properties:
-        amount:
-          type: number
-        method:
-          type: string
-          enum: [bank, upi]
-
-    WithdrawalRequest:
-      type: object
-      required: [id, amount, grossAmount, deductionAmount, netAmount, status, method, createdAt]
-      properties:
-        id:
-          type: integer
-        amount:
-          type: number
-        grossAmount:
-          type: number
-        deductionAmount:
-          type: number
-        netAmount:
-          type: number
-        status:
-          type: string
-          enum: [pending, approved, rejected]
-        method:
-          type: string
-        rejectionReason:
-          type: ["string", "null"]
-        createdAt:
-          type: string
-        processedAt:
-          type: ["string", "null"]
+        isTerminated:
+          type: boolean
 
     CtoPoolStatus:
       type: object
@@ -1197,25 +976,6 @@ components:
         goldActiveUsers:
           type: integer
 
-    CtoDistribution:
-      type: object
-      required: [id, month, year, amount, package, cumulativeReceived, isTerminated]
-      properties:
-        id:
-          type: integer
-        month:
-          type: integer
-        year:
-          type: integer
-        amount:
-          type: number
-        package:
-          type: string
-        cumulativeReceived:
-          type: number
-        isTerminated:
-          type: boolean
-
     CtoRecoveryStatus:
       type: object
       required: [packageCost, totalReceived, remainingForRecovery, recoveryPercent, isRecovered, ctoActive]
@@ -1232,6 +992,241 @@ components:
           type: boolean
         ctoActive:
           type: boolean
+
+    DashboardStats:
+      type: object
+      required: [availableBalance, todayEarning, totalTeamSize, leftBv, rightBv, totalPairs, todayPairs, package, ctoActive, ctoEarned, packageCost]
+      properties:
+        availableBalance:
+          type: number
+        todayEarning:
+          type: number
+        totalTeamSize:
+          type: integer
+        leftBv:
+          type: integer
+        rightBv:
+          type: integer
+        totalPairs:
+          type: integer
+        todayPairs:
+          type: integer
+        package:
+          type: string
+        ctoActive:
+          type: boolean
+        ctoEarned:
+          type: number
+        packageCost:
+          type: integer
+        recentTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+
+    Epin:
+      type: object
+      required: [id, pin, package, packagePrice, bv, status, createdAt]
+      properties:
+        id:
+          type: integer
+        pin:
+          type: string
+        package:
+          type: string
+          enum: [starter, smart, silver, gold]
+        packagePrice:
+          type: integer
+        bv:
+          type: integer
+        status:
+          type: string
+          enum: [unused, used, transferred]
+        assignedToId:
+          type: ["integer", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        transferredToId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+        usedAt:
+          type: ["string", "null"]
+
+    EpinAssignInput:
+      type: object
+      required: [pinIds, userId]
+      properties:
+        pinIds:
+          type: array
+          items:
+            type: integer
+        userId:
+          type: integer
+
+    EpinGenerateInput:
+      type: object
+      required: [package, quantity]
+      properties:
+        package:
+          type: string
+          enum: [starter, smart, silver, gold]
+        quantity:
+          type: integer
+
+    EpinHistoryEntry:
+      type: object
+      required: [id, pin, package, action, date]
+      properties:
+        id:
+          type: integer
+        pin:
+          type: string
+        package:
+          type: string
+        action:
+          type: string
+        fromName:
+          type: ["string", "null"]
+        toName:
+          type: ["string", "null"]
+        date:
+          type: string
+
+    EpinPage:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Epin"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    EpinTransferInput:
+      type: object
+      required: [pinId, recipientMemberId, otp]
+      properties:
+        pinId:
+          type: integer
+        recipientMemberId:
+          type: string
+        otp:
+          type: string
+
+    EpinValidation:
+      type: object
+      required: [pin, package, packagePrice, bv, valid]
+      properties:
+        pin:
+          type: string
+        package:
+          type: string
+          enum: [starter, smart, silver, gold]
+        packagePrice:
+          type: integer
+        bv:
+          type: integer
+        valid:
+          type: boolean
+
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    LoginInput:
+      type: object
+      required: [memberId, password]
+      properties:
+        memberId:
+          type: string
+        password:
+          type: string
+
+    PackageBreakdown:
+      type: object
+      required: [smart, silver, gold]
+      properties:
+        smart:
+          type: integer
+        silver:
+          type: integer
+        gold:
+          type: integer
+
+    ProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        bankAccount:
+          type: string
+        bankName:
+          type: string
+        ifscCode:
+          type: string
+        upiId:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [sponsorId, epin, name, email, phone, password]
+      properties:
+        sponsorId:
+          type: string
+        epin:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+        position:
+          type: string
+          enum: [left, right]
+
+    RejectionInput:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+
+    RewardClaim:
+      type: object
+      required: [milestoneId, claimedAs, cashValue, rewardName]
+      properties:
+        milestoneId:
+          type: integer
+        claimedAs:
+          type: string
+        cashValue:
+          type: integer
+        rewardName:
+          type: string
+
+    RewardClaimInput:
+      type: object
+      required: [milestoneId, claimAs]
+      properties:
+        milestoneId:
+          type: integer
+        claimAs:
+          type: string
+          enum: [reward, cash]
 
     RewardMilestone:
       type: object
@@ -1266,83 +1261,42 @@ components:
         nextMilestoneName:
           type: ["string", "null"]
 
-    RewardClaimInput:
+    SponsorInfo:
       type: object
-      required: [milestoneId, claimAs]
+      required: [memberId, name]
       properties:
-        milestoneId:
-          type: integer
-        claimAs:
+        memberId:
           type: string
-          enum: [reward, cash]
-
-    RewardClaim:
-      type: object
-      required: [milestoneId, claimedAs, cashValue, rewardName]
-      properties:
-        milestoneId:
-          type: integer
-        claimedAs:
+        name:
           type: string
-        cashValue:
-          type: integer
-        rewardName:
-          type: string
-
-    AdminDashboardStats:
-      type: object
-      required: [totalMembers, activeMembers, todayRegistrations, totalTurnover, pendingWithdrawals, totalWithdrawals, adminFeeCollected, packageBreakdown]
-      properties:
-        totalMembers:
-          type: integer
-        activeMembers:
-          type: integer
-        todayRegistrations:
-          type: integer
-        totalTurnover:
-          type: number
-        pendingWithdrawals:
-          type: integer
-        totalWithdrawals:
-          type: number
-        adminFeeCollected:
-          type: number
-        packageBreakdown:
-          $ref: "#/components/schemas/PackageBreakdown"
-        recentRegistrations:
-          type: array
-          items:
-            $ref: "#/components/schemas/User"
-
-    PackageBreakdown:
-      type: object
-      required: [smart, silver, gold]
-      properties:
-        smart:
-          type: integer
-        silver:
-          type: integer
-        gold:
-          type: integer
-
-    EpinGenerateInput:
-      type: object
-      required: [package, quantity]
-      properties:
         package:
           type: string
-          enum: [smart, silver, gold]
-        quantity:
-          type: integer
 
-    EpinPage:
+    Transaction:
+      type: object
+      required: [id, type, amount, description, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        createdAt:
+          type: string
+        status:
+          type: string
+
+    TransactionPage:
       type: object
       required: [data, total, page, limit]
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Epin"
+            $ref: "#/components/schemas/Transaction"
         total:
           type: integer
         page:
@@ -1350,16 +1304,52 @@ components:
         limit:
           type: integer
 
-    EpinAssignInput:
+    TurnoverInput:
       type: object
-      required: [pinIds, userId]
+      required: [amount, month, year]
       properties:
-        pinIds:
-          type: array
-          items:
-            type: integer
-        userId:
+        amount:
+          type: number
+        month:
           type: integer
+        year:
+          type: integer
+
+    User:
+      type: object
+      required: [id, memberId, name, email, phone, package, bv, status, role, createdAt]
+      properties:
+        id:
+          type: integer
+        memberId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        package:
+          type: string
+          enum: [starter, smart, silver, gold]
+        bv:
+          type: integer
+        status:
+          type: string
+          enum: [active, blocked, inactive]
+        role:
+          type: string
+          enum: [member, admin]
+        sponsorId:
+          type: ["integer", "null"]
+        leftChildId:
+          type: ["integer", "null"]
+        rightChildId:
+          type: ["integer", "null"]
+        ctoActive:
+          type: boolean
+        createdAt:
+          type: string
 
     UserPage:
       type: object
@@ -1376,19 +1366,6 @@ components:
         limit:
           type: integer
 
-    AdminUserDetail:
-      type: object
-      required: [user, wallet, binaryStats, ctoStatus]
-      properties:
-        user:
-          $ref: "#/components/schemas/User"
-        wallet:
-          $ref: "#/components/schemas/WalletInfo"
-        binaryStats:
-          $ref: "#/components/schemas/BinaryStats"
-        ctoStatus:
-          $ref: "#/components/schemas/CtoRecoveryStatus"
-
     UserStatusUpdate:
       type: object
       required: [status]
@@ -1396,6 +1373,33 @@ components:
         status:
           type: string
           enum: [active, blocked]
+
+    WalletInfo:
+      type: object
+      required: [balance, totalEarned, totalWithdrawn, pendingWithdrawal]
+      properties:
+        balance:
+          type: number
+        totalEarned:
+          type: number
+        totalWithdrawn:
+          type: number
+        pendingWithdrawal:
+          type: number
+        bankAccount:
+          type: ["string", "null"]
+        upiId:
+          type: ["string", "null"]
+
+    WithdrawalInput:
+      type: object
+      required: [amount, method]
+      properties:
+        amount:
+          type: number
+        method:
+          type: string
+          enum: [bank, upi]
 
     WithdrawalPage:
       type: object
@@ -1412,31 +1416,28 @@ components:
         limit:
           type: integer
 
-    RejectionInput:
+    WithdrawalRequest:
       type: object
-      required: [reason]
+      required: [id, amount, grossAmount, deductionAmount, netAmount, status, method, createdAt]
       properties:
-        reason:
-          type: string
-
-    CronResult:
-      type: object
-      required: [success, message, processedCount]
-      properties:
-        success:
-          type: boolean
-        message:
-          type: string
-        processedCount:
+        id:
           type: integer
-
-    TurnoverInput:
-      type: object
-      required: [amount, month, year]
-      properties:
         amount:
           type: number
-        month:
-          type: integer
-        year:
-          type: integer
+        grossAmount:
+          type: number
+        deductionAmount:
+          type: number
+        netAmount:
+          type: number
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        method:
+          type: string
+        rejectionReason:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        processedAt:
+          type: ["string", "null"]
