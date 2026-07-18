@@ -10,6 +10,7 @@ export type EpinPackage = typeof EpinPackage[keyof typeof EpinPackage];
 
 
 export const EpinPackage = {
+  starter: 'starter',
   smart: 'smart',
   silver: 'silver',
   gold: 'gold',

@@ -95,7 +95,7 @@ router.post("/epins/request", requireAuth, async (req, res) => {
   const user = (req as any).user;
   const { package: pkg, quantity, paymentReference } = req.body;
 
-  if (!pkg || !["smart", "silver", "gold"].includes(pkg)) {
+  if (!pkg || !["starter", "smart", "silver", "gold"].includes(pkg)) {
     return void res.status(400).json({ error: "Invalid package" });
   }
   if (!quantity || quantity < 1 || quantity > 100) {

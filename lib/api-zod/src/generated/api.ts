@@ -514,7 +514,7 @@ export const GetAdminDashboardResponse = zod.object({
  * @summary Bulk generate E-Pins for a package
  */
 export const AdminGenerateEpinsBody = zod.object({
-  "package": zod.enum(['smart', 'silver', 'gold']),
+  "package": zod.enum(['starter', 'smart', 'silver', 'gold']),
   "quantity": zod.number()
 })
 
