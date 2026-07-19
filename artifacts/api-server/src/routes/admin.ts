@@ -130,7 +130,18 @@ ctoSummary: {
 router.post("/admin/epins/generate", requireAdmin, async (req, res) => {
   const admin = (req as any).user;
   const body = AdminGenerateEpinsBody.safeParse(req.body);
-  if (!body.success) return void res.status(400).json({ error: "Validation error" });
+
+if (!body.success) {
+  console.log("========== ZOD ERROR ==========");
+  console.log(JSON.stringify(body.error.issues, null, 2));
+  console.log("Received Body:", req.body);
+
+  return res.status(400).json({
+    error: "Validation error",
+    issues: body.error.issues,
+    received: req.body,
+  });
+}
 
   const { package: pkg, quantity } = body.data;
   const pkgInfo = PACKAGES[pkg.toLowerCase() as unknown as keyof typeof PACKAGES];
