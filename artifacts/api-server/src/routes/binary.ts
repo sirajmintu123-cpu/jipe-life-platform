@@ -22,6 +22,12 @@ router.get("/binary/stats", requireAuth, async (req, res) => {
   const [todayLog] = await db.select().from(binaryMatchingLogsTable)
     .where(and(eq(binaryMatchingLogsTable.userId, user.id), eq(binaryMatchingLogsTable.matchDate, today)));
 
+console.log("===== BINARY STATS =====");
+console.log("User:", user.memberId, user.id);
+console.log("TodayLog:", todayLog);
+console.log("todayPairs:", todayLog?.pairsMatched ?? 0);
+console.log("todayEarning:", todayLog ? parseFloat(todayLog.netAmount) : 0);
+
   res.json({
     leftBv: user.leftBv,
     rightBv: user.rightBv,

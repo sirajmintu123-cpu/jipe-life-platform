@@ -5,6 +5,10 @@ import { Wallet, TrendingUp, Users, BarChart3, Star, Zap } from "lucide-react";
 import { formatINR } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  useGetBinaryStats,
+  getGetBinaryStatsQueryKey
+} from "@workspace/api-client-react";
 
 function TransactionRow({ tx }: { tx: any }) {
   const typeColors: Record<string, string> = {
@@ -21,6 +25,7 @@ function TransactionRow({ tx }: { tx: any }) {
     withdrawal: "Withdrawal",
     reward_cash: "Reward Cash",
   };
+
   return (
     <div className="flex items-center justify-between py-3 border-b border-border last:border-0" data-testid={`tx-row-${tx.id}`}>
       <div className="flex items-center gap-3 min-w-0">
@@ -37,7 +42,20 @@ function TransactionRow({ tx }: { tx: any }) {
 }
 
 export default function Dashboard() {
-  const { data, isLoading } = useGetUserDashboard({ query: { queryKey: getGetUserDashboardQueryKey() } });
+  const { data, isLoading } = useGetUserDashboard({
+    query: {
+      queryKey: getGetUserDashboardQueryKey()
+    }
+  });
+
+  const { data: stats } = useGetBinaryStats({
+    query: {
+      queryKey: getGetBinaryStatsQueryKey()
+    }
+  });
+
+  console.log("Dashboard:", data);
+  console.log("Binary Stats:", stats);
 
   return (
     <MemberLayout>
@@ -54,12 +72,12 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             <StatCard label="Available Balance" value={formatINR(data?.availableBalance ?? 0)} icon={Wallet} accent="green" />
-            <StatCard label="Today's Earning" value={formatINR(data?.todayEarning ?? 0)} icon={TrendingUp} accent="blue" />
+            <StatCard label="Today's Earning" value={formatINR(stats?.todayEarning ?? 0)} icon={TrendingUp} accent="blue" />
             <StatCard label="Total Team Size" value={data?.totalTeamSize ?? 0} icon={Users} accent="gold" />
             <StatCard label="Lifetime Pairs" value={data?.totalPairs ?? 0} icon={BarChart3} accent="blue" />
             <StatCard label="Left PV" value={data?.leftBv ?? 0} icon={BarChart3} accent="blue" sub="Binary volume left leg" />
             <StatCard label="Right PV" value={data?.rightBv ?? 0} icon={BarChart3} accent="green" sub="Binary volume right leg" />
-            <StatCard label="Today's Pairs" value={data?.todayPairs ?? 0} icon={Zap} accent="gold" sub="Matched today" />
+            <StatCard label="Today's Pairs" value={stats?.todayPairs ?? 0} icon={Zap} accent="gold" sub="Matched today" />
             <StatCard label="CTO Earned" value={formatINR(data?.ctoEarned ?? 0)} icon={Star} accent={data?.ctoActive ? "green" : "red"} sub={data?.ctoActive ? "Pool active" : "Recovery complete"} />
           </div>
         )}
@@ -96,21 +114,32 @@ export default function Dashboard() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Left PV</span>
-                <span className="font-bold text-[#0F2D59]">{data?.leftBv ?? 0} PV</span>
+                <span className="font-bold text-[#0F2D59]">
+                  {data?.leftBv ?? 0} PV
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Right PV</span>
-                <span className="font-bold text-emerald-600">{data?.rightBv ?? 0} PV</span>
+                <span className="font-bold text-emerald-600">
+                  {data?.rightBv ?? 0} PV
+                </span>
               </div>
               <div className="border-t border-border pt-3 flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Today's Pairs</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#0F2D59]">{data?.todayPairs ?? 0}</span>
-                  {(data?.todayPairs ?? 0) >= 10 && (
-                    <Badge className="bg-amber-400 text-[#0F2D59] text-xs font-bold">JACKPOT</Badge>
+                  <span className="font-bold text-[#0F2D59]">
+                    {stats?.todayPairs ?? 0}
+                  </span>
+                  {(stats?.todayPairs ?? 0) >= 10 && (
+                    <Badge className="bg-amber-400 text-[#0F2D59] text-xs font-bold">
+                      JACKPOT
+                    </Badge>
                   )}
-                  {(data?.todayPairs ?? 0) >= 4 && (data?.todayPairs ?? 0) < 10 && (
-                    <Badge className="bg-orange-100 text-orange-800 text-xs">CAPPED</Badge>
+                  {(stats?.todayPairs ?? 0) >= 4 &&
+                   (stats?.todayPairs ?? 0) < 10 && (
+                    <Badge className="bg-orange-100 text-orange-800 text-xs">
+                      CAPPED
+                    </Badge>
                   )}
                 </div>
               </div>

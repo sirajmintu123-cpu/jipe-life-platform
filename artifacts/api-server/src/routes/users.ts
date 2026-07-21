@@ -32,6 +32,14 @@ router.get("/users/dashboard", requireAuth, async (req, res) => {
     .orderBy(desc(transactionsTable.createdAt))
     .limit(5);
 
+   console.log("******** DASHBOARD ROUTE EXECUTED ********");
+console.log({
+  memberId: user.memberId,
+  todayLog,
+  todayPairs: todayLog?.pairsMatched ?? 0,
+  todayEarning: todayLog ? parseFloat(todayLog.netAmount) : 0,
+});
+
   res.json({
     availableBalance: parseFloat(wallet?.balance ?? "0"),
     todayEarning: todayLog ? parseFloat(todayLog.netAmount) : 0,
