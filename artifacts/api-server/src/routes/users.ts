@@ -35,6 +35,8 @@ router.get("/users/dashboard", requireAuth, async (req, res) => {
    console.log("******** DASHBOARD ROUTE EXECUTED ********");
 console.log({
   memberId: user.memberId,
+  userId: user.id,
+  todayLogUserId: todayLog?.userId,
   todayLog,
   todayPairs: todayLog?.pairsMatched ?? 0,
   todayEarning: todayLog ? parseFloat(todayLog.netAmount) : 0,
