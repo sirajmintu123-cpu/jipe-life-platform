@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { usersTable, walletsTable, transactionsTable, binaryMatchingLogsTable } from "@workspace/db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import { UpdateUserProfileBody } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 
@@ -13,10 +13,14 @@ router.get("/users/dashboard", requireAuth, async (req, res) => {
   const [wallet] = await db.select().from(walletsTable).where(eq(walletsTable.userId, user.id));
 
   const today = new Date().toISOString().split("T")[0];
-  const [todayLog] = await db.select().from(binaryMatchingLogsTable)
-    .where(eq(binaryMatchingLogsTable.userId, user.id))
-    .where(eq(binaryMatchingLogsTable.matchDate, today));
-
+  const [todayLog] = await db.select()
+  .from(binaryMatchingLogsTable)
+  .where(
+    and(
+      eq(binaryMatchingLogsTable.userId, user.id),
+      eq(binaryMatchingLogsTable.matchDate, today)
+    )
+  );
   // Count team size (all downlines)
   const teamResult = await db.execute(
     sql`WITH RECURSIVE tree AS (
