@@ -32,14 +32,20 @@ router.get("/users/dashboard", requireAuth, async (req, res) => {
     .orderBy(desc(transactionsTable.createdAt))
     .limit(5);
 
-   console.log("******** DASHBOARD ROUTE EXECUTED ********");
+  console.log("******** DASHBOARD ROUTE EXECUTED ********");
+
 console.log({
-  memberId: user.memberId,
-  userId: user.id,
+  authUserId: user.id,
+  authMemberId: user.memberId,
+  authName: user.name,
+
   todayLogUserId: todayLog?.userId,
   todayLog,
+
   todayPairs: todayLog?.pairsMatched ?? 0,
-  todayEarning: todayLog ? parseFloat(todayLog.netAmount) : 0,
+  todayEarning: todayLog
+    ? parseFloat(todayLog.netAmount)
+    : 0,
 });
 
   res.json({
