@@ -96,14 +96,30 @@ export default function AdminCtoControl() {
     });
   }
 
-  function handleRunCto() {
-    runCto.mutate({}, {
+function handleRunCto() {
+  runCto.mutate(
+    {
+      data: {
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
+      },
+    },
+    {
       onSuccess: (res) => {
         setLastResult(res);
         qc.invalidateQueries({ queryKey: getGetCtoPoolStatusQueryKey() });
         qc.invalidateQueries({ queryKey: ["cto-history"] });
         qc.invalidateQueries({ queryKey: ["cto-recovery"] });
-        toast({ title: "CTO distribution complete!", description: `${res.processedCount} members received royalties.` });
+        const processedCount =
+  (res.starter?.membersPaid ?? 0) +
+  (res.smart?.membersPaid ?? 0) +
+  (res.silver?.membersPaid ?? 0) +
+  (res.gold?.membersPaid ?? 0);
+
+toast({
+  title: "CTO Distribution Complete",
+  description: `${processedCount} members received royalties.`,
+});
       },
       onError: (err: any) => toast({ title: "CTO distribution failed", description: err?.data?.error, variant: "destructive" }),
     });
@@ -120,7 +136,7 @@ export default function AdminCtoControl() {
           <h1 className="text-2xl font-black text-[#0F2D59] flex items-center gap-2">
             <TrendingUp size={22} /> CTO Pool Control
           </h1>
-          <p className="text-sm text-muted-foreground">Record monthly turnover and distribute royalties</p>
+          <p className="text-sm text-muted-foreground">Review monthly turnover and distribute CTO royalties</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -379,12 +395,35 @@ export default function AdminCtoControl() {
                 </Button>
 
                 {lastResult && (
-                  <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <p className="font-bold text-emerald-700">Distribution Complete</p>
-                    <p className="text-sm text-emerald-600 mt-1">{lastResult.message}</p>
-                    <p className="text-xs text-emerald-500 mt-1">{lastResult.processedCount} members processed</p>
-                  </div>
-                )}
+  <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+    <p className="font-bold text-emerald-700">
+      Distribution Complete
+    </p>
+
+    <p className="text-sm text-emerald-600 mt-1">
+      CTO distribution completed successfully.
+    </p>
+
+    <p className="text-xs text-emerald-500 mt-2">
+      Total Members Processed:{" "}
+      {(lastResult.starter?.membersPaid ?? 0) +
+        (lastResult.smart?.membersPaid ?? 0) +
+        (lastResult.silver?.membersPaid ?? 0) +
+        (lastResult.gold?.membersPaid ?? 0)}
+    </p>
+
+    <div className="mt-3 text-xs text-gray-700 space-y-1">
+      <p>Starter : {lastResult.starter?.membersPaid ?? 0}</p>
+      <p>Smart : {lastResult.smart?.membersPaid ?? 0}</p>
+      <p>Silver : {lastResult.silver?.membersPaid ?? 0}</p>
+      <p>Gold : {lastResult.gold?.membersPaid ?? 0}</p>
+    </div>
+
+    <p className="mt-3 text-xs text-emerald-700 font-semibold">
+      Treasury Returned: {formatINR(lastResult.treasuryReturned ?? 0)}
+    </p>
+  </div>
+)}
               </div>
             </div>
 
