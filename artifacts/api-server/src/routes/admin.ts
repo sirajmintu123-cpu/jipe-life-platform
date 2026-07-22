@@ -22,6 +22,13 @@ import {
   deliverReward,
 } from "../services/rewards/adminRewards";
 
+import {
+  calculateMonthlyRevenue,
+  calculatePools,
+  saveMonthlyPools,
+  distributeMonthlyCTO,
+} from "../services/cto/ctoDistribution";
+
 const router = Router();
 
 router.get("/admin/dashboard", requireAdmin, async (req, res) => {
@@ -809,10 +816,35 @@ router.post(
 // ─────────────────────────────────────────────────────────────
 
 router.post("/admin/cron/run-cto", requireAdmin, async (req, res) => {
-  return res.json({
-    success: true,
-    message: "New CTO module is under development.",
-  });
+  try {
+    const { month, year } = req.body;
+
+    const revenue = await calculateMonthlyRevenue(month, year);
+
+    const pools = calculatePools(
+      revenue.registrationRevenue,
+      revenue.repurchaseRevenue
+    );
+
+    await saveMonthlyPools(month, year, pools);
+
+    const result = await distributeMonthlyCTO(month, year);
+
+    return res.json({
+      success: true,
+      revenue,
+      pools,
+      ...result,
+    });
+
+  } catch (err: any) {
+    console.error("CTO Distribution Error:", err);
+
+    return res.status(400).json({
+      success: false,
+      message: err.message || "CTO distribution failed",
+    });
+  }
 });
 
 router.get("/admin/rewards/pending", requireAdmin, async (_req, res) => {
