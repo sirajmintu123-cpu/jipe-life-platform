@@ -222,7 +222,15 @@ router.post(
         success: true,
         revenue,
         pools,
-        distribution: result,
+
+        month: result.month,
+        year: result.year,
+        treasuryReturned: result.treasuryReturned,
+
+        starter: result.starter,
+        smart: result.smart,
+        silver: result.silver,
+        gold: result.gold,
       });
 
     } catch (error: any) {
