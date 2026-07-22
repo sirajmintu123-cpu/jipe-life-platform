@@ -121,7 +121,15 @@ toast({
   description: `${processedCount} members received royalties.`,
 });
       },
-      onError: (err: any) => toast({ title: "CTO distribution failed", description: err?.data?.error, variant: "destructive" }),
+      onError: (err: any) =>
+  toast({
+    title: "CTO Distribution Failed",
+    description:
+      err?.data?.message ||
+      err?.message ||
+      "Unknown error",
+    variant: "destructive",
+  }),
     });
   }
 
