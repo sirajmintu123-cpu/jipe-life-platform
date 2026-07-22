@@ -78,6 +78,48 @@ router.get(
   },
 );
 
+
+/* ============================================================
+   GET CTO CURRENT (Admin Dashboard)
+============================================================ */
+
+router.get(
+  "/cto/current",
+  requireAdmin,
+  async (_req, res) => {
+    res.json({
+      success: true,
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
+
+      registrationRevenue: 0,
+      repurchaseRevenue: 0,
+      totalTurnover: 0,
+
+      starterPool: 0,
+      smartPool: 0,
+      silverPool: 0,
+      goldPool: 0,
+
+      starterActiveUsers: 0,
+      smartActiveUsers: 0,
+      silverActiveUsers: 0,
+      goldActiveUsers: 0,
+
+      starterPerShare: 0,
+      smartPerShare: 0,
+      silverPerShare: 0,
+      goldPerShare: 0,
+
+      distributionStatus: "pending",
+      distributionDate: null,
+
+      totalActiveMembers: 0,
+      topEarners: [],
+    });
+  },
+);
+
 /* ============================================================
    POST RUN CTO
 ============================================================ */
