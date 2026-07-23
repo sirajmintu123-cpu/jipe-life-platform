@@ -67,6 +67,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/CronResult"
 
+
   /admin/cron/run-cto:
     post:
       operationId: adminRunCtoDistribution
@@ -296,6 +297,7 @@ paths:
       responses:
         "200":
           description: Rejected
+          
 
   # ── AUTH ──────────────────────────────────────────────────────────────────
   /auth/admin/login:
@@ -627,6 +629,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BinaryNode"
+
+
+/cto/member-summary:
+  get:
+    tags: [cto]
+    operationId: getCtoMemberSummary
+    responses:
+      "200":
+        description: Member CTO summary
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CtoMemberSummary"                
 
   /users/dashboard:
     get:
@@ -992,6 +1007,41 @@ components:
           type: boolean
         ctoActive:
           type: boolean
+
+    CtoMemberSummary:
+      type: object
+      required:
+        [
+          package,
+          packageCost,
+          totalEarned,
+          currentMonthIncome,
+          remainingRecovery,
+          recoveryPercent,
+          ctoActive,
+          month,
+          year
+        ]
+      properties:
+        package:
+          type: string
+        packageCost:
+          type: integer
+        totalEarned:
+          type: number
+        currentMonthIncome:
+          type: number
+        remainingRecovery:
+          type: number
+        recoveryPercent:
+          type: number
+        ctoActive:
+          type: boolean
+        month:
+          type: integer
+        year:
+          type: integer
+          
 
     DashboardStats:
       type: object

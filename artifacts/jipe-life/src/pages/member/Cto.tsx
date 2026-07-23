@@ -1,6 +1,6 @@
 import MemberLayout from "@/components/MemberLayout";
 import {
-  useGetCtoPoolStatus, useGetCtoHistory, useGetCtoRecoveryStatus,
+  useGetCtoPoolStatus, useGetCtoMemberSummary, getGetCtoMemberSummaryQueryKey, useGetCtoHistory, useGetCtoRecoveryStatus,
   getGetCtoPoolStatusQueryKey, getGetCtoHistoryQueryKey, getGetCtoRecoveryStatusQueryKey
 } from "@workspace/api-client-react";
 import { formatINR } from "@/lib/api";
@@ -15,7 +15,14 @@ export default function Cto() {
   const { data: pool, isLoading: poolLoading } = useGetCtoPoolStatus({ query: { queryKey: getGetCtoPoolStatusQueryKey() } });
   const { data: history, isLoading: histLoading } = useGetCtoHistory({ query: { queryKey: getGetCtoHistoryQueryKey() } });
   const { data: recovery, isLoading: recLoading } = useGetCtoRecoveryStatus({ query: { queryKey: getGetCtoRecoveryStatusQueryKey() } });
-
+const {
+  data: summary,
+  isLoading: summaryLoading,
+} = useGetCtoMemberSummary({
+  query: {
+    queryKey: getGetCtoMemberSummaryQueryKey(),
+  },
+});
   return (
     <MemberLayout>
       <div className="max-w-4xl">
@@ -23,6 +30,74 @@ export default function Cto() {
           <h1 className="text-2xl font-black text-[#0F2D59]">CTO Royalty Pool</h1>
           <p className="text-sm text-muted-foreground">30% of global monthly turnover — divided equally among active members</p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+
+  <div className="bg-white rounded-xl border p-5">
+    <p className="text-xs text-muted-foreground">
+      Total CTO Earned
+    </p>
+    <p className="text-2xl font-black text-emerald-600">
+      {formatINR(summary?.totalEarned ?? 0)}
+    </p>
+  </div>
+
+  <div className="bg-white rounded-xl border p-5">
+    <p className="text-xs text-muted-foreground">
+      Current Month
+    </p>
+    <p className="text-2xl font-black text-blue-600">
+      {formatINR(summary?.currentMonthIncome ?? 0)}
+    </p>
+  </div>
+
+         <div className="bg-white rounded-xl border p-5">
+  <p className="text-xs text-muted-foreground">
+    Recovery Remaining
+  </p>
+
+  <p className="text-2xl font-black text-orange-600">
+    {formatINR(summary?.remainingRecovery ?? 0)}
+  </p>
+
+  <p className="text-xs text-muted-foreground mt-1">
+    Until 100% package recovery
+  </p>
+</div>
+
+  <div className="bg-white rounded-xl border p-5">
+    <p className="text-xs text-muted-foreground">
+  Package
+</p>
+
+<p className="text-xl font-bold">
+  {summary?.package?.toUpperCase()}
+</p>
+
+<p className="text-xs text-muted-foreground mt-1">
+  Target: {formatINR(summary?.packageCost ?? 0)}
+</p>
+  </div>
+
+  <div className="bg-white rounded-xl border p-5">
+    <p className="text-xs text-muted-foreground">
+      CTO Status
+    </p>
+
+    {summary?.ctoActive ? (
+    <Badge className="bg-green-100 text-green-700 border border-green-300">
+  Active
+</Badge>
+
+    ) : (
+      <Badge className="bg-red-100 text-red-700 border border-red-300">
+  Completed
+</Badge>
+    )}
+
+  </div>
+
+</div>
 
         {/* Recovery Status */}
         <div className="bg-gradient-to-br from-[#0F2D59] to-[#1a3f70] rounded-xl p-6 text-white mb-6">
@@ -50,6 +125,8 @@ export default function Cto() {
             </div>
           )}
         </div>
+
+         
 
         {/* Pool Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
