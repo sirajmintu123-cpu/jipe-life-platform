@@ -631,15 +631,15 @@ paths:
                 $ref: "#/components/schemas/BinaryNode"
 
 
-/cto/member-summary:
-  get:
-    tags: [cto]
-    operationId: getCtoMemberSummary
-    responses:
-      "200":
-        description: Member CTO summary
-        content:
-          application/json:
+  /cto/member-summary:
+    get:
+      tags: [cto]
+      operationId: getCtoMemberSummary
+      responses:
+        "200":
+          description: Member CTO summary
+          content:
+            application/json:
             schema:
               $ref: "#/components/schemas/CtoMemberSummary"                
 
