@@ -11,7 +11,7 @@ import { getToken } from "@/lib/api";
 
 setAuthTokenGetter(() => getToken());
 
-setBaseUrl("http://200.97.172.74/api");
+setBaseUrl("https://jipelife.in");
 
 createRoot(document.getElementById("root")!).render(
   <App />
