@@ -27,6 +27,7 @@ import {
 
 import {
   requireAdmin,
+  requireAuth,
 } from "../lib/auth";
 
 import {
@@ -86,15 +87,50 @@ router.get(
 
 router.get(
   "/cto/current",
-  requireAdmin,
+  requireAuth,
   async (_req, res) => {
     try {
 
       const pool = await db.query.ctoMonthlyPoolsTable.findFirst({
-        orderBy: (table, { desc }) => [desc(table.year), desc(table.month)],
-      });
+  orderBy: (table, { desc }) => [
+    desc(table.year),
+    desc(table.month),
+  ],
+});
 
-      const logs = await db
+if (!pool) {
+  return res.json({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+
+    registrationRevenue: 0,
+    repurchaseRevenue: 0,
+    totalTurnover: 0,
+
+    starterPool: 0,
+    smartPool: 0,
+    silverPool: 0,
+    goldPool: 0,
+
+    starterActiveUsers: 0,
+    smartActiveUsers: 0,
+    silverActiveUsers: 0,
+    goldActiveUsers: 0,
+
+    starterPerShare: 0,
+    smartPerShare: 0,
+    silverPerShare: 0,
+    goldPerShare: 0,
+
+    distributionStatus: "pending",
+    distributionDate: null,
+
+    totalActiveMembers: 0,
+    topEarners: [],
+  });
+}
+
+const logs = await db
   .select()
   .from(ctoDistributionLogsTable)
   .where(
@@ -116,38 +152,7 @@ const silverActiveUsers =
 const goldActiveUsers =
   logs.filter(x => x.package === "gold").length;
 
-      if (!pool) {
-        return res.json({
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-
-          registrationRevenue: 0,
-          repurchaseRevenue: 0,
-          totalTurnover: 0,
-
-          starterPool: 0,
-          smartPool: 0,
-          silverPool: 0,
-          goldPool: 0,
-
-          starterActiveUsers: 0,
-          smartActiveUsers: 0,
-          silverActiveUsers: 0,
-          goldActiveUsers: 0,
-
-          starterPerShare: 0,
-          smartPerShare: 0,
-          silverPerShare: 0,
-          goldPerShare: 0,
-
-          distributionStatus: "pending",
-          distributionDate: null,
-
-          totalActiveMembers: 0,
-          topEarners: [],
-        });
-      }
-
+      
       
       const starterPool = Number(pool.starterPool);
       const smartPool = Number(pool.smartPool);
@@ -224,7 +229,7 @@ totalActiveMembers:
 
 router.get(
   "/cto/history",
-  requireAdmin,
+  requireAuth,
   async (req, res) => {
     try {
       const user = (req as any).user;
@@ -272,7 +277,7 @@ router.get(
 
 router.get(
   "/cto/recovery-status",
-  requireAdmin,
+  requireAuth,
   async (req, res) => {
     try {
       const user = (req as any).user;
@@ -316,6 +321,116 @@ router.get(
         success: false,
         message: error.message,
       });
+    }
+  },
+);
+
+
+/* ============================================================
+   GET MEMBER CTO SUMMARY
+============================================================ */
+
+router.get(
+  "/cto/member-summary",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const user = (req as any).user;
+
+      const packageCostMap: Record<string, number> = {
+        starter: 1100,
+        smart: 2100,
+        silver: 5100,
+        gold: 10100,
+      };
+
+      const packageName = (user.package ?? "").toLowerCase();
+
+      const packageCost =
+        packageCostMap[packageName] ?? 0;
+
+      const totalEarned =
+        Number(user.ctoTotalReceived ?? 0);
+
+      const remainingRecovery =
+        Math.max(
+          0,
+          packageCost - totalEarned,
+        );
+
+      const recoveryPercent =
+        packageCost > 0
+          ? Number(
+              (
+                (totalEarned / packageCost) *
+                100
+              ).toFixed(2),
+            )
+          : 0;
+
+      // Latest monthly pool
+      const latestPool =
+        await db.query.ctoMonthlyPoolsTable.findFirst({
+          orderBy: (table, { desc }) => [
+            desc(table.year),
+            desc(table.month),
+          ],
+        });
+
+      let currentMonthIncome = 0;
+
+      if (latestPool) {
+
+        const logs = await db
+          .select()
+          .from(ctoDistributionLogsTable)
+          .where(
+            and(
+              eq(
+                ctoDistributionLogsTable.monthlyPoolId,
+                latestPool.id,
+              ),
+              eq(
+                ctoDistributionLogsTable.userId,
+                user.id,
+              ),
+            ),
+          );
+
+        currentMonthIncome =
+          logs.reduce(
+            (sum, row) =>
+              sum + Number(row.amount),
+            0,
+          );
+
+      }
+
+      res.json({
+
+        package: packageName,
+
+        packageCost,
+        
+        totalEarned,
+
+        currentMonthIncome,
+
+        remainingRecovery,
+
+        recoveryPercent,
+
+        ctoActive: user.ctoActive,
+
+      });
+
+    } catch (error: any) {
+
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+
     }
   },
 );
