@@ -94,6 +94,28 @@ router.get(
         orderBy: (table, { desc }) => [desc(table.year), desc(table.month)],
       });
 
+      const logs = await db
+  .select()
+  .from(ctoDistributionLogsTable)
+  .where(
+    eq(
+      ctoDistributionLogsTable.monthlyPoolId,
+      pool.id,
+    ),
+  );
+
+const starterActiveUsers =
+  logs.filter(x => x.package === "starter").length;
+
+const smartActiveUsers =
+  logs.filter(x => x.package === "smart").length;
+
+const silverActiveUsers =
+  logs.filter(x => x.package === "silver").length;
+
+const goldActiveUsers =
+  logs.filter(x => x.package === "gold").length;
+
       if (!pool) {
         return res.json({
           month: new Date().getMonth() + 1,
@@ -126,24 +148,7 @@ router.get(
         });
       }
 
-      const users = await db.select().from(usersTable);
-
-      const starter = users.filter(
-        u => u.package === "starter" && u.ctoActive && !u.ctoLocked,
-      );
-
-      const smart = users.filter(
-        u => u.package === "smart" && u.ctoActive && !u.ctoLocked,
-      );
-
-      const silver = users.filter(
-        u => u.package === "silver" && u.ctoActive && !u.ctoLocked,
-      );
-
-      const gold = users.filter(
-        u => u.package === "gold" && u.ctoActive && !u.ctoLocked,
-      );
-
+      
       const starterPool = Number(pool.starterPool);
       const smartPool = Number(pool.smartPool);
       const silverPool = Number(pool.silverPool);
@@ -162,33 +167,43 @@ router.get(
         silverPool,
         goldPool,
 
-        starterActiveUsers: starter.length,
-        smartActiveUsers: smart.length,
-        silverActiveUsers: silver.length,
-        goldActiveUsers: gold.length,
+starterActiveUsers,
 
-        starterPerShare:
-          starter.length > 0 ? starterPool / starter.length : 0,
+smartActiveUsers,
 
-        smartPerShare:
-          smart.length > 0 ? smartPool / smart.length : 0,
+silverActiveUsers,
 
-        silverPerShare:
-          silver.length > 0 ? silverPool / silver.length : 0,
+goldActiveUsers,
 
-        goldPerShare:
-          gold.length > 0 ? goldPool / gold.length : 0,
+starterPerShare:
+  starterActiveUsers > 0
+    ? starterPool / starterActiveUsers
+    : 0,
+
+smartPerShare:
+  smartActiveUsers > 0
+    ? smartPool / smartActiveUsers
+    : 0,
+
+silverPerShare:
+  silverActiveUsers > 0
+    ? silverPool / silverActiveUsers
+    : 0,
+
+goldPerShare:
+  goldActiveUsers > 0
+    ? goldPool / goldActiveUsers
+    : 0,
 
         distributionStatus:
           pool.distributed ? "completed" : "pending",
 
         distributionDate: pool.distributedAt,
-
-        totalActiveMembers:
-          starter.length +
-          smart.length +
-          silver.length +
-          gold.length,
+totalActiveMembers:
+  starterActiveUsers +
+  smartActiveUsers +
+  silverActiveUsers +
+  goldActiveUsers,
 
         topEarners: [],
       });
