@@ -22,12 +22,9 @@ import {
   deliverReward,
 } from "../services/rewards/adminRewards";
 
-import {
-  calculateMonthlyRevenue,
-  calculatePools,
-  saveMonthlyPools,
-  distributeMonthlyCTO,
-} from "../services/cto/ctoDistribution";
+import { calculateMonthlyRevenue } from "../services/cto/ctoRevenue";
+import { calculatePools, saveMonthlyPools } from "../services/cto/ctoPools";
+import { distributeMonthlyCTO } from "../services/cto/ctoDistribution";
 
 const router = Router();
 
