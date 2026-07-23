@@ -813,22 +813,13 @@ router.post(
 // ─────────────────────────────────────────────────────────────
 
 router.post("/admin/cron/run-cto", requireAdmin, async (req, res) => {
-  console.log("req.body =", req.body);
-
   try {
-    const month = req.body?.month;
-    const year = req.body?.year;
+    const now = new Date();
 
-    if (!month || !year) {
-      return res.status(400).json({
-        success: false,
-        message: "month and year are required",
-        body: req.body,
-      });
-    }
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
 
     const revenue = await calculateMonthlyRevenue(month, year);
-
     const pools = calculatePools(
       revenue.registrationRevenue,
       revenue.repurchaseRevenue
