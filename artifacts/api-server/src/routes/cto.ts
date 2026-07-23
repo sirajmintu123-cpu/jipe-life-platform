@@ -88,39 +88,121 @@ router.get(
   "/cto/current",
   requireAdmin,
   async (_req, res) => {
-    res.json({
-      success: true,
-      month: new Date().getMonth() + 1,
-      year: new Date().getFullYear(),
+    try {
 
-      registrationRevenue: 0,
-      repurchaseRevenue: 0,
-      totalTurnover: 0,
+      const pool = await db.query.ctoMonthlyPoolsTable.findFirst({
+        orderBy: (table, { desc }) => [desc(table.year), desc(table.month)],
+      });
 
-      starterPool: 0,
-      smartPool: 0,
-      silverPool: 0,
-      goldPool: 0,
+      if (!pool) {
+        return res.json({
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
 
-      starterActiveUsers: 0,
-      smartActiveUsers: 0,
-      silverActiveUsers: 0,
-      goldActiveUsers: 0,
+          registrationRevenue: 0,
+          repurchaseRevenue: 0,
+          totalTurnover: 0,
 
-      starterPerShare: 0,
-      smartPerShare: 0,
-      silverPerShare: 0,
-      goldPerShare: 0,
+          starterPool: 0,
+          smartPool: 0,
+          silverPool: 0,
+          goldPool: 0,
 
-      distributionStatus: "pending",
-      distributionDate: null,
+          starterActiveUsers: 0,
+          smartActiveUsers: 0,
+          silverActiveUsers: 0,
+          goldActiveUsers: 0,
 
-      totalActiveMembers: 0,
-      topEarners: [],
-    });
+          starterPerShare: 0,
+          smartPerShare: 0,
+          silverPerShare: 0,
+          goldPerShare: 0,
+
+          distributionStatus: "pending",
+          distributionDate: null,
+
+          totalActiveMembers: 0,
+          topEarners: [],
+        });
+      }
+
+      const users = await db.select().from(usersTable);
+
+      const starter = users.filter(
+        u => u.package === "starter" && u.ctoActive && !u.ctoLocked,
+      );
+
+      const smart = users.filter(
+        u => u.package === "smart" && u.ctoActive && !u.ctoLocked,
+      );
+
+      const silver = users.filter(
+        u => u.package === "silver" && u.ctoActive && !u.ctoLocked,
+      );
+
+      const gold = users.filter(
+        u => u.package === "gold" && u.ctoActive && !u.ctoLocked,
+      );
+
+      const starterPool = Number(pool.starterPool);
+      const smartPool = Number(pool.smartPool);
+      const silverPool = Number(pool.silverPool);
+      const goldPool = Number(pool.goldPool);
+
+      res.json({
+        month: pool.month,
+        year: pool.year,
+
+        registrationRevenue: Number(pool.registrationRevenue),
+        repurchaseRevenue: Number(pool.repurchaseRevenue),
+        totalTurnover: Number(pool.totalRevenue),
+
+        starterPool,
+        smartPool,
+        silverPool,
+        goldPool,
+
+        starterActiveUsers: starter.length,
+        smartActiveUsers: smart.length,
+        silverActiveUsers: silver.length,
+        goldActiveUsers: gold.length,
+
+        starterPerShare:
+          starter.length > 0 ? starterPool / starter.length : 0,
+
+        smartPerShare:
+          smart.length > 0 ? smartPool / smart.length : 0,
+
+        silverPerShare:
+          silver.length > 0 ? silverPool / silver.length : 0,
+
+        goldPerShare:
+          gold.length > 0 ? goldPool / gold.length : 0,
+
+        distributionStatus:
+          pool.distributed ? "completed" : "pending",
+
+        distributionDate: pool.distributedAt,
+
+        totalActiveMembers:
+          starter.length +
+          smart.length +
+          silver.length +
+          gold.length,
+
+        topEarners: [],
+      });
+
+    } catch (error: any) {
+
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+
+    }
   },
 );
-
 /* ============================================================
    GET CTO HISTORY (Admin)
 ============================================================ */
