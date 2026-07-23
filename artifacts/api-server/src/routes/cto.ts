@@ -154,12 +154,44 @@ router.get(
 router.get(
   "/cto/recovery-status",
   requireAdmin,
-  async (_req, res) => {
+  async (req, res) => {
     try {
+      const user = (req as any).user;
+
+      const packageCostMap: Record<string, number> = {
+        starter: 1100,
+        smart: 2100,
+        silver: 5100,
+        gold: 10100,
+      };
+
+      const packageName = (user.package ?? "").toLowerCase();
+
+      const packageCost = packageCostMap[packageName] ?? 0;
+
+      const totalReceived = Number(user.ctoTotalReceived ?? 0);
+
+      const remainingForRecovery = Math.max(
+        0,
+        packageCost - totalReceived,
+      );
+
+      const recoveryPercent =
+        packageCost > 0
+          ? Number(
+              ((totalReceived / packageCost) * 100).toFixed(2),
+            )
+          : 0;
+
       res.json({
-        success: true,
-        data: [],
+        packageCost,
+        totalReceived,
+        remainingForRecovery,
+        recoveryPercent,
+        isRecovered: !user.ctoActive,
+        ctoActive: user.ctoActive,
       });
+
     } catch (error: any) {
       res.status(500).json({
         success: false,
