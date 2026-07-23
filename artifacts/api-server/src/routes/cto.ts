@@ -5,6 +5,7 @@ import {
   usersTable,
   ctoMonthlyPoolsTable,
   ctoHistoryTable,
+  ctoDistributionLogsTable,
 } from "@workspace/db";
 
 import {
@@ -127,13 +128,36 @@ router.get(
 router.get(
   "/cto/history",
   requireAdmin,
-  async (_req, res) => {
+  async (req, res) => {
     try {
+      const user = (req as any).user;
 
-      res.json({
-        success: true,
-        data: [],
-      });
+      const logs = await db
+        .select()
+        .from(ctoDistributionLogsTable)
+        .where(eq(ctoDistributionLogsTable.userId, user.id));
+
+      const history = logs
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() -
+            new Date(a.createdAt).getTime(),
+        )
+        .map((log) => ({
+          id: log.id,
+          month: new Date(log.createdAt).getMonth() + 1,
+          year: new Date(log.createdAt).getFullYear(),
+
+          package: log.package,
+
+          amount: Number(log.amount),
+
+          cumulativeReceived: Number(log.afterReceived),
+
+          isTerminated: log.lockedAfterPayment,
+        }));
+
+      res.json(history);
 
     } catch (error: any) {
 
@@ -145,8 +169,6 @@ router.get(
     }
   },
 );
-
-
 /* ============================================================
    GET CTO RECOVERY STATUS (Admin)
 ============================================================ */
