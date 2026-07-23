@@ -813,8 +813,19 @@ router.post(
 // ─────────────────────────────────────────────────────────────
 
 router.post("/admin/cron/run-cto", requireAdmin, async (req, res) => {
+  console.log("req.body =", req.body);
+
   try {
-    const { month, year } = req.body;
+    const month = req.body?.month;
+    const year = req.body?.year;
+
+    if (!month || !year) {
+      return res.status(400).json({
+        success: false,
+        message: "month and year are required",
+        body: req.body,
+      });
+    }
 
     const revenue = await calculateMonthlyRevenue(month, year);
 
@@ -837,12 +848,13 @@ router.post("/admin/cron/run-cto", requireAdmin, async (req, res) => {
   } catch (err: any) {
     console.error("CTO Distribution Error:", err);
 
-    return res.status(400).json({
+    return res.status(500).json({
       success: false,
       message: err.message || "CTO distribution failed",
     });
   }
 });
+
 
 router.get("/admin/rewards/pending", requireAdmin, async (_req, res) => {
   try {
