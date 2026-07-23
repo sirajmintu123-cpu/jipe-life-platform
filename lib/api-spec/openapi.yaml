@@ -640,8 +640,8 @@ paths:
           description: Member CTO summary
           content:
             application/json:
-            schema:
-              $ref: "#/components/schemas/CtoMemberSummary"                
+              schema:
+                $ref: "#/components/schemas/CtoMemberSummary"                
 
   /users/dashboard:
     get:
