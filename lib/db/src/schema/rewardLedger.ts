@@ -1,3 +1,14 @@
+import {
+  pgTable,
+  serial,
+  integer,
+  varchar,
+  numeric,
+  timestamp,
+  text,
+} from "drizzle-orm/pg-core";
+
+import { usersTable } from "./users";
 export const rewardLedgerTable = pgTable("reward_ledger", {
   id: serial("id").primaryKey(),
 
