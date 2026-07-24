@@ -59,7 +59,14 @@ Position : ${member.position}
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog
+  open={open}
+  onOpenChange={(value) => {
+    if (!value) {
+      onClose();
+    }
+  }}
+>
 
       <DialogContent className="max-w-md rounded-3xl">
 

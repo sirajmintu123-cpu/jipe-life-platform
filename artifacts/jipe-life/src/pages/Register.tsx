@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, ArrowLeft } from "lucide-react";
+import RegisterSuccessDialog from "@/components/RegisterSuccessDialog";
 
 const PACKAGE_COLORS: Record<string, string> = {
   starter: "bg-green-100 text-green-800",
@@ -41,6 +42,19 @@ export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const register = useRegisterUser();
+  const [successOpen, setSuccessOpen] = useState(false);
+
+const [registeredMember, setRegisteredMember] = useState<{
+  memberId: string;
+  name: string;
+  sponsorId: string;
+  sponsorName: string;
+  password: string;
+  package: string;
+  pv: string;
+  position: string;
+  registerTime: string;
+} | null>(null);
   const [sponsorInput, setSponsorInput] = useState("");
   const [epinInput, setEpinInput] = useState("");
 
@@ -62,10 +76,33 @@ export default function Register() {
   function onSubmit(values: z.infer<typeof schema>) {
     register.mutate({ data: values }, {
       onSuccess: (data) => {
-        setAuth(data.token, data.user.role);
-        toast({ title: "Registration successful!", description: `Welcome, ${data.user.name}! Your Member ID: ${data.user.memberId}` });
-        setLocation("/member/dashboard");
-      },
+  setAuth(data.token, data.user.role);
+
+  const packageName = epinQuery.data?.package ?? "starter";
+
+  const pv =
+    packageName === "starter"
+      ? "0.5 PV"
+      : packageName === "smart"
+      ? "1 PV"
+      : packageName === "silver"
+      ? "2 PV"
+      : "4 PV";
+
+  setRegisteredMember({
+    memberId: data.user.memberId,
+    name: data.user.name,
+    sponsorId: values.sponsorId,
+    sponsorName: sponsorQuery.data?.name ?? "",
+    password: values.password,
+    package: packageName.toUpperCase(),
+    pv,
+    position: values.position.toUpperCase(),
+    registerTime: new Date().toLocaleString(),
+  });
+
+  setSuccessOpen(true);
+},
       onError: (err: any) => {
         toast({ title: "Registration failed", description: err?.data?.error ?? "Please check your details.", variant: "destructive" });
       },
@@ -216,6 +253,22 @@ export default function Register() {
           <Link href="/" className="text-[#0F2D59] font-semibold hover:underline">Sign in</Link>
         </p>
       </div>
+      {registeredMember && (
+  <RegisterSuccessDialog
+    open={successOpen}
+    member={registeredMember}
+    onClose={() => {
+      setSuccessOpen(false);
+
+      form.reset();
+
+      setSponsorInput("");
+      setEpinInput("");
+
+      setLocation("/");
+    }}
+  />
+)}
     </div>
   );
 }
