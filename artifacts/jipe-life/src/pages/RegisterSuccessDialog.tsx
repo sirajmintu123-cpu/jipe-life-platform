@@ -1,7 +1,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import jsPDF from "jspdf";
 
 interface Props {
   open: boolean;
@@ -39,7 +38,6 @@ Position : ${member.position}
     alert("Credentials copied successfully.");
   };
 
-  const downloadPDF = () => {
     const pdf = new jsPDF();
 
     pdf.setFontSize(20);
@@ -129,13 +127,6 @@ Position : ${member.position}
 
               <Button onClick={copyCredentials}>
                 📋 Copy Credentials
-              </Button>
-
-              <Button
-                variant="secondary"
-                onClick={downloadPDF}
-              >
-                📄 Download PDF
               </Button>
 
               <Button
