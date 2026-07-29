@@ -8,8 +8,6 @@ interface Props {
   member: {
     memberId: string;
     name: string;
-    sponsorId: string;
-    sponsorName: string;
     password: string;
     package: string;
     pv: string;
@@ -28,7 +26,6 @@ export default function RegisterSuccessDialog({
 Member ID : ${member.memberId}
 Password : ${member.password}
 Name : ${member.name}
-Sponsor : ${member.sponsorId}
 Package : ${member.package}
 Position : ${member.position}
 `;
@@ -38,23 +35,7 @@ Position : ${member.position}
     alert("Credentials copied successfully.");
   };
 
-    const pdf = new jsPDF();
-
-    pdf.setFontSize(20);
-    pdf.text("JIPE LIFE", 70, 20);
-
-    pdf.setFontSize(14);
-
-    pdf.text(`Member ID : ${member.memberId}`,20,40);
-    pdf.text(`Name : ${member.name}`,20,50);
-    pdf.text(`Password : ${member.password}`,20,60);
-    pdf.text(`Sponsor : ${member.sponsorId}`,20,70);
-    pdf.text(`Package : ${member.package}`,20,80);
-    pdf.text(`Position : ${member.position}`,20,90);
-    pdf.text(`Registered : ${member.registerTime}`,20,100);
-
-    pdf.save(`${member.memberId}.pdf`);
-  };
+    
 
   return (
     <Dialog
@@ -97,13 +78,7 @@ Position : ${member.position}
 
               <div>Password : {member.password}</div>
 
-              <div>
-                Sponsor :
-                {member.sponsorId}
-                {" - "}
-                {member.sponsorName}
-              </div>
-
+              
               <div>
                 Package :
                 {member.package}

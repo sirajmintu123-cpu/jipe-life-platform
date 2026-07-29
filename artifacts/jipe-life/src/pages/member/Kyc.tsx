@@ -116,36 +116,48 @@ export default function Kyc() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium">Front Photo URL</label>
+                  <label className="text-sm font-medium">Aadhaar Front Image</label>
                   <FileUploader
-    label="Aadhaar Front"
-    folder="kyc"
-    value={form.aadhaarFrontUrl}
-    disabled={locked}
-    onUploaded={(url)=>
-        setForm(f=>({
-            ...f,
-            aadhaarFrontUrl:url
-        }))
-    }
-/>
-                    onChange={e => setForm(f => ({ ...f, aadhaarFrontUrl: e.target.value }))} disabled={locked} />
+                    label="Aadhaar Front"
+                    folder="kyc"
+                    value={form.aadhaarFrontUrl}
+                    disabled={locked}
+                    onUploaded={(url) =>
+                      setForm((f) => ({
+                        ...f,
+                        aadhaarFrontUrl: url,
+                      }))
+                    }
+                  />
+                  {form.aadhaarFrontUrl && (
+                    <img
+                      src={`${BASE}${form.aadhaarFrontUrl}`}
+                      alt="Aadhaar Front"
+                      className="mt-2 h-40 w-full rounded-lg border object-cover"
+                    />
+                  )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Back Photo URL</label>
+                  <label className="text-sm font-medium">Aadhaar Back Image</label>
                   <FileUploader
-    label="Aadhaar Back"
-    folder="kyc"
-    value={form.aadhaarBackUrl}
-    disabled={locked}
-    onUploaded={(url)=>
-        setForm(f=>({
-            ...f,
-            aadhaarBackUrl:url
-        }))
-    }
-/>
-                    onChange={e => setForm(f => ({ ...f, aadhaarBackUrl: e.target.value }))} disabled={locked} />
+                    label="Aadhaar Back"
+                    folder="kyc"
+                    value={form.aadhaarBackUrl}
+                    disabled={locked}
+                    onUploaded={(url) =>
+                      setForm((f) => ({
+                        ...f,
+                        aadhaarBackUrl: url,
+                      }))
+                    }
+                  />
+                  {form.aadhaarBackUrl && (
+                    <img
+                      src={`${BASE}${form.aadhaarBackUrl}`}
+                      alt="Aadhaar Back"
+                      className="mt-2 h-40 w-full rounded-lg border object-cover"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -161,20 +173,26 @@ export default function Kyc() {
                   onChange={e => setForm(f => ({ ...f, panNumber: e.target.value.toUpperCase() }))} disabled={locked} />
               </div>
               <div>
-                <label className="text-sm font-medium">PAN Photo URL</label>
+                <label className="text-sm font-medium">PAN Card Image</label>
                 <FileUploader
-    label="PAN Card"
-    folder="kyc"
-    value={form.panPhotoUrl}
-    disabled={locked}
-    onUploaded={(url)=>
-        setForm(f=>({
-            ...f,
-            panPhotoUrl:url
-        }))
-    }
-/>
-                  onChange={e => setForm(f => ({ ...f, panPhotoUrl: e.target.value }))} disabled={locked} />
+                  label="PAN Card"
+                  folder="kyc"
+                  value={form.panPhotoUrl}
+                  disabled={locked}
+                  onUploaded={(url) =>
+                    setForm((f) => ({
+                      ...f,
+                      panPhotoUrl: url,
+                    }))
+                  }
+                />
+                {form.panPhotoUrl && (
+                  <img
+                    src={`${BASE}${form.panPhotoUrl}`}
+                    alt="PAN Card"
+                    className="mt-2 h-40 w-full rounded-lg border object-cover"
+                  />
+                )}
               </div>
             </div>
           </div>
