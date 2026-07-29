@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, ArrowLeft } from "lucide-react";
-import RegisterSuccessDialog from "@/components/RegisterSuccessDialog";
+import RegisterSuccessDialog from "./RegisterSuccessDialog";
 
 const PACKAGE_COLORS: Record<string, string> = {
   starter: "bg-green-100 text-green-800",
