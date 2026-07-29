@@ -32,21 +32,14 @@ const storage = multer.diskStorage({
   filename(req, file, cb) {
     const ext = path.extname(file.originalname);
 
-    const filename =
-      Date.now() +
-      "-" +
-      Math.random().toString(36).substring(2, 10) +
-      ext;
-
-    cb(null, filename);
+    cb(
+      null,
+      `${Date.now()}-${Math.random().toString(36).substring(2, 10)}${ext}`
+    );
   },
 });
 
-function fileFilter(
-  req: any,
-  file: Express.Multer.File,
-  cb: multer.FileFilterCallback
-) {
+const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
   const allowed = [
     "image/jpeg",
     "image/png",
@@ -55,11 +48,12 @@ function fileFilter(
   ];
 
   if (!allowed.includes(file.mimetype)) {
-    return cb(new Error("Unsupported file type"));
+    cb(new Error("Unsupported file type"));
+    return;
   }
 
   cb(null, true);
-}
+};
 
 export const upload = multer({
   storage,
