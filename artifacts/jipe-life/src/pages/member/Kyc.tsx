@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { getToken } from "@/lib/api";
 import { ShieldCheck, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
+import FileUploader from "@/components/Upload/FileUploader";
 
 const BASE = import.meta.env.BASE_URL;
 async function apiFetch(path: string, options: RequestInit = {}) {
@@ -116,12 +117,34 @@ export default function Kyc() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium">Front Photo URL</label>
-                  <Input className="mt-1.5" placeholder="Paste Google Drive / cloud link" value={form.aadhaarFrontUrl}
+                  <FileUploader
+    label="Aadhaar Front"
+    folder="kyc"
+    value={form.aadhaarFrontUrl}
+    disabled={locked}
+    onUploaded={(url)=>
+        setForm(f=>({
+            ...f,
+            aadhaarFrontUrl:url
+        }))
+    }
+/>
                     onChange={e => setForm(f => ({ ...f, aadhaarFrontUrl: e.target.value }))} disabled={locked} />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Back Photo URL</label>
-                  <Input className="mt-1.5" placeholder="Paste Google Drive / cloud link" value={form.aadhaarBackUrl}
+                  <FileUploader
+    label="Aadhaar Back"
+    folder="kyc"
+    value={form.aadhaarBackUrl}
+    disabled={locked}
+    onUploaded={(url)=>
+        setForm(f=>({
+            ...f,
+            aadhaarBackUrl:url
+        }))
+    }
+/>
                     onChange={e => setForm(f => ({ ...f, aadhaarBackUrl: e.target.value }))} disabled={locked} />
                 </div>
               </div>
@@ -139,7 +162,18 @@ export default function Kyc() {
               </div>
               <div>
                 <label className="text-sm font-medium">PAN Photo URL</label>
-                <Input className="mt-1.5" placeholder="Paste Google Drive / cloud link" value={form.panPhotoUrl}
+                <FileUploader
+    label="PAN Card"
+    folder="kyc"
+    value={form.panPhotoUrl}
+    disabled={locked}
+    onUploaded={(url)=>
+        setForm(f=>({
+            ...f,
+            panPhotoUrl:url
+        }))
+    }
+/>
                   onChange={e => setForm(f => ({ ...f, panPhotoUrl: e.target.value }))} disabled={locked} />
               </div>
             </div>
