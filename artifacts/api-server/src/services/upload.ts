@@ -1,6 +1,6 @@
 import { getToken } from "@/lib/api";
 
-const BASE = import.meta.env.BASE_URL;
+const BASE = "/";
 
 export interface UploadResponse {
   success: boolean;
@@ -17,24 +17,25 @@ export async function uploadFile(
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(
-    `${BASE}api/upload?folder=${folder}`,
-    {
-      method: "POST",
-      headers: token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {},
-      body: formData,
-    }
-  );
+  const response = await fetch(`${BASE}api/upload?folder=${folder}`, {
+    method: "POST",
+    headers: token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {},
+    body: formData,
+  });
 
-  const data = await response.json();
+  const data = (await response.json()) as
+    | UploadResponse
+    | { error: string };
 
   if (!response.ok) {
-    throw new Error(data.error || "Upload failed");
+    throw new Error(
+      "error" in data ? data.error : "Upload failed"
+    );
   }
 
-  return data;
+  return data as UploadResponse;
 }
