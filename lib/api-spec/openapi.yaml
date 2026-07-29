@@ -762,6 +762,54 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/WithdrawalRequest"
+  /upload:
+    post:
+      operationId: uploadFile
+      tags:
+        - upload
+      summary: Upload a file
+      parameters:
+        - in: query
+          name: folder
+          required: true
+          schema:
+            type: string
+            enum:
+              - users
+              - kyc
+              - products
+              - rewards
+              - news
+              - banners
+              - gallery
+              - company
+              - temp
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  filename:
+                    type: string
+                  url:
+                    type: string                
 
 components:
   schemas:

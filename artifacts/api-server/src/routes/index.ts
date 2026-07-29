@@ -9,6 +9,7 @@ import ctoRouter from "./cto";
 import rewardsRouter from "./rewards";
 import adminRouter from "./admin";
 import kycRouter from "./kyc";
+import uploadRouter from "./upload";
 
 const router: IRouter = Router();
 
@@ -29,6 +30,7 @@ router.use(ctoRouter);
 router.use(rewardsRouter);
 router.use(adminRouter);
 router.use(kycRouter);
+router.use(uploadRouter);
 
 
 export default router;
