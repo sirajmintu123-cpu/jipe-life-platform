@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { upload } from "../middleware/upload";
+import { upload } from "../middlewares/upload";
 import { requireAuth } from "../lib/auth";
 
 const router = Router();
