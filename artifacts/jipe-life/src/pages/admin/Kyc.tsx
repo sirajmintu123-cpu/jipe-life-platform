@@ -115,7 +115,7 @@ export default function AdminKyc() {
                   <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">No KYC submissions</td></tr>
                 )}
                 {data?.data?.map((k: any) => (
-                  <tr key={k.userId} className="border-b border-border last:border-0 hover:bg-gray-50">
+                  <tr key={k.id} className="border-b border-border last:border-0 hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <p className="font-bold text-xs text-[#0F2D59] font-mono">{k.memberId}</p>
                       <p className="text-xs text-muted-foreground">{k.memberName}</p>
@@ -135,10 +135,10 @@ export default function AdminKyc() {
                         </Button>
                         {k.status === "pending" && (
                           <>
-                            <Button size="sm" className="gap-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" disabled={processing} onClick={() => handleApprove(k.userId)}>
+                            <Button size="sm" className="gap-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" disabled={processing} onClick={() => handleApprove(k.id)}>
                               <CheckCircle size={12} /> Approve
                             </Button>
-                            <Button size="sm" variant="destructive" className="gap-1 text-xs" onClick={() => setRejectKycId(k.userId)}>
+                            <Button size="sm" variant="destructive" className="gap-1 text-xs" onClick={() => setRejectKycId(k.id)}>
                               <XCircle size={12} /> Reject
                             </Button>
                           </>
@@ -200,10 +200,10 @@ export default function AdminKyc() {
           {viewKyc?.status === "pending" && (
             <DialogFooter className="gap-2">
               <Button variant="outline" onClick={() => setViewKyc(null)}>Close</Button>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" disabled={processing} onClick={() => handleApprove(viewKyc.userId)}>
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" disabled={processing} onClick={() => handleApprove(viewKyc.id)}>
                 <CheckCircle size={14} /> Approve
               </Button>
-              <Button variant="destructive" className="gap-1" onClick={() => { setRejectKycId(viewKyc.userId); setViewKyc(null); }}>
+              <Button variant="destructive" className="gap-1" onClick={() => { setRejectKycId(viewKyc.id); setViewKyc(null); }}>
                 <XCircle size={14} /> Reject
               </Button>
             </DialogFooter>
